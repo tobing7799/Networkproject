@@ -158,6 +158,7 @@
     <ClInclude Include="Board.h" />
     <ClInclude Include="Bow.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="CubeMap.h" />
     <ClInclude Include="global.h" />

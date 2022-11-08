@@ -88,5 +88,8 @@
     <ClInclude Include="stb_image.h">
       <Filter>소스 파일\헤더파일</Filter>
     </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>소스 파일\헤더파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

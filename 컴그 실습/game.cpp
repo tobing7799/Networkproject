@@ -12,6 +12,8 @@
 #include "Board.h"
 #include "Cube.h"
 
+#include "Common.h"
+
 char* filetobuf(const char* file);
 void InitBuffer();
 void InitShader();
@@ -145,6 +147,10 @@ GLenum Mode = GL_FILL;
 
 void main(int argc, char** argv)
 {
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		return;
+
 	width = 800;
 	height = 800;
 
@@ -1703,6 +1709,12 @@ GLvoid Keyborad(unsigned char key, int x, int y)
 	case 't':
 	case 'T':
 		main_loading = false;
+		break;
+	case 27: // Escape
+		// 소켓 삭제 ------------
+		WSACleanup();
+		glutLeaveMainLoop();
+	default:
 		break;
 	}
 	glutPostRedisplay();
