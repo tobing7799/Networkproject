@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1321
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32126.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "컴그 실습", "컴그 실습\컴그 실습.vcxproj", "{A047DED6-E4AC-4207-A96E-F049B071270D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServer", "GameServer\GameServer.vcxproj", "{3B939B13-45BF-473C-912F-773A47D1AFD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,11 +23,19 @@ Global
 		{A047DED6-E4AC-4207-A96E-F049B071270D}.Release|x64.Build.0 = Release|x64
 		{A047DED6-E4AC-4207-A96E-F049B071270D}.Release|x86.ActiveCfg = Release|Win32
 		{A047DED6-E4AC-4207-A96E-F049B071270D}.Release|x86.Build.0 = Release|Win32
+		{3B939B13-45BF-473C-912F-773A47D1AFD9}.Debug|x64.ActiveCfg = Debug|x64
+		{3B939B13-45BF-473C-912F-773A47D1AFD9}.Debug|x64.Build.0 = Debug|x64
+		{3B939B13-45BF-473C-912F-773A47D1AFD9}.Debug|x86.ActiveCfg = Debug|Win32
+		{3B939B13-45BF-473C-912F-773A47D1AFD9}.Debug|x86.Build.0 = Debug|Win32
+		{3B939B13-45BF-473C-912F-773A47D1AFD9}.Release|x64.ActiveCfg = Release|x64
+		{3B939B13-45BF-473C-912F-773A47D1AFD9}.Release|x64.Build.0 = Release|x64
+		{3B939B13-45BF-473C-912F-773A47D1AFD9}.Release|x86.ActiveCfg = Release|Win32
+		{3B939B13-45BF-473C-912F-773A47D1AFD9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {03450669-1504-421D-B149-B1FECE4E2D47}
+		SolutionGuid = {922803DC-6F31-4282-9A4B-BED495A4A547}
 	EndGlobalSection
 EndGlobal

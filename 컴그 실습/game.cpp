@@ -14,6 +14,8 @@
 
 #include "Common.h"
 
+char* SERVERIP = (char*)"127.0.0.2"; // default local
+
 char* filetobuf(const char* file);
 void InitBuffer();
 void InitShader();
@@ -145,8 +147,9 @@ bool main_loading = true;
 
 GLenum Mode = GL_FILL;
 
-void main(int argc, char** argv)
+void main(int argc, char* argv[])
 {
+	if (argc > 1) SERVERIP = argv[1]; // default local
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return;
