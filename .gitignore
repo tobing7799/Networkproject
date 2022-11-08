@@ -36,3 +36,5 @@ x64/
 *.mp4
 debug/
 .vs/
+
+컴그 실습/Release
