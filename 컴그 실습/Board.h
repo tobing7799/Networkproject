@@ -15,4 +15,6 @@ public:
 	void Draw3(int programID, int wind_dir);
 	void Draw4(int programID, int wind_speed);
 	void Draw5(int programID);
+	void Draw6(int programID);
+	void Draw7(int programID);
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include "global.h"
 
-extern unsigned int texture[42];
+extern unsigned int texture[44];
 
 class Object {
 public:

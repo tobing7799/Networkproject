@@ -43,7 +43,10 @@ glm::mat4 cameratransform4;
 glm::mat4 cameratransform5;
 glm::mat4 cameratransform6;
 
-unsigned int texture[42];
+glm::mat4 cameratransform7;
+glm::mat4 cameratransform8;
+
+unsigned int texture[44];
 
 GLuint shaderID;
 GLint width, height;
@@ -168,7 +171,7 @@ void main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(1600, 800);
+	glutInitWindowSize(1600, 850);
 	glutCreateWindow("test");
 	glewExperimental = GL_TRUE;
 
@@ -551,6 +554,33 @@ GLvoid drawScene()
 		glActiveTexture(GL_TEXTURE0);
 
 		board.Draw4(s_program, wind_speed);
+
+		glViewport(200, 800, 400, 50);
+		cameratransform7 = glm::mat4(1.0f);
+		cameratransform7 = glm::rotate(cameratransform7, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform7 = glm::rotate(cameratransform7, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation7 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation7, 1, GL_FALSE, glm::value_ptr(cameratransform7));
+
+		glm::mat4 perspect7 = glm::mat4(1.0f);
+		perspect7 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect7 = glm::translate(perspect7, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation7 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation7, 1, GL_FALSE, glm::value_ptr(perspect7));
+
+		int cameraPosLocation7 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation7, 1, glm::value_ptr(cameraPos));
+		int lightPosLocation7= glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation7, x_1, y_1, z_1);
+		int lightColorLocation7 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation7, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw7(s_program);
 	}
 	else if (main_loading)
 	{
@@ -814,6 +844,33 @@ GLvoid drawScene()
 		glActiveTexture(GL_TEXTURE0);
 
 		board.Draw4(s_program, wind_speed);
+
+		glViewport(1000, 800, 400, 50);
+		cameratransform8 = glm::mat4(1.0f);
+		cameratransform8 = glm::rotate(cameratransform8, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform8 = glm::rotate(cameratransform8, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation8 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation8, 1, GL_FALSE, glm::value_ptr(cameratransform8));
+
+		glm::mat4 perspect8 = glm::mat4(1.0f);
+		perspect8 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect8 = glm::translate(perspect8, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation8 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation8, 1, GL_FALSE, glm::value_ptr(perspect8));
+
+		int cameraPosLocation8 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation8, 1, glm::value_ptr(cameraPos));
+		int lightPosLocation8 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation8, x_1, y_1, z_1);
+		int lightColorLocation8 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation8, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw6(s_program);
 	}
 	else if (main_loading)
 	{
@@ -925,6 +982,9 @@ void InitTexture()
 	int widthImage_loading, heightImage_loading, numberOfChannel_loading;
 	int widthImage_cube, heightImage_cube, numberOfChannel_cube;
 
+	int widthImage_enemydisplay, heightImage_enemydisplay, numberOfChannel_enemydisplay;
+	int widthImage_mydisplay, heightImage_mydisplay, numberOfChannel_mydisplay;
+
 	stbi_set_flip_vertically_on_load(true);
 
 	unsigned char* sky1 = stbi_load("sky1.png", &widthImage, &heightImage, &numberOfChannel, 0);
@@ -981,8 +1041,11 @@ void InitTexture()
 
 	unsigned char* cube = stbi_load("cube.png", &widthImage_cube, &heightImage_cube, &numberOfChannel_cube, 0);
 
+	unsigned char* enemydisplay = stbi_load("enemydisplay.png", &widthImage_enemydisplay, &heightImage_enemydisplay, &numberOfChannel_enemydisplay, 0);
+	unsigned char* mydisplay = stbi_load("mydisplay.png", &widthImage_mydisplay, &heightImage_mydisplay, &numberOfChannel_mydisplay, 0);
 
-	glGenTextures(42, texture);
+
+	glGenTextures(44, texture);
 
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -1326,6 +1389,22 @@ void InitTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, widthImage_cube, heightImage_cube, 0, GL_BGRA, GL_UNSIGNED_BYTE, cube);
 	stbi_image_free(cube);
+
+	glBindTexture(GL_TEXTURE_2D, texture[42]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, widthImage_enemydisplay, heightImage_enemydisplay, 0, GL_BGRA, GL_UNSIGNED_BYTE, enemydisplay);
+	stbi_image_free(enemydisplay);
+
+	glBindTexture(GL_TEXTURE_2D, texture[43]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, widthImage_mydisplay, heightImage_mydisplay, 0, GL_BGRA, GL_UNSIGNED_BYTE, mydisplay);
+	stbi_image_free(mydisplay);
 
 	glUseProgram(s_program);
 	int tLocation = glGetUniformLocation(s_program, "outTexture");
