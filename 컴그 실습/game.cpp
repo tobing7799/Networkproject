@@ -168,7 +168,7 @@ void main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(width, height);
+	glutInitWindowSize(1600, 800);
 	glutCreateWindow("test");
 	glewExperimental = GL_TRUE;
 
@@ -555,6 +555,269 @@ GLvoid drawScene()
 	else if (main_loading)
 	{
 		glViewport(-100, -100, 1000, 1000);
+		cameratransform5 = glm::mat4(1.0f);
+		cameratransform5 = glm::rotate(cameratransform5, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform5 = glm::rotate(cameratransform5, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation5 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation5, 1, GL_FALSE, glm::value_ptr(cameratransform5));
+
+		glm::mat4 perspect5 = glm::mat4(1.0f);
+		perspect5 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect5 = glm::translate(perspect5, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation5 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation5, 1, GL_FALSE, glm::value_ptr(perspect5));
+
+		int cameraPosLocation5 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation5, 1, glm::value_ptr(cameraPos));
+		int lightPosLocation5 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation5, x_1, y_1, z_1);
+		int lightColorLocation5 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation5, Light_R, Light_G, Light_B);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw5(s_program);
+	}
+
+	//임시로 상대 화면은 내 화면이 되도록 만들음
+	glViewport(800, 0, 800, 800);
+	if (main_loading == false)
+	{
+		cameratransform = glm::mat4(1.0f);
+		cameratransform = glm::rotate(cameratransform, (float)glm::radians(x_angle), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform = glm::rotate(cameratransform, (float)glm::radians(y_angle + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		//cameratransform = glm::rotate(cameratransform, (float)glm::radians(180.0), glm::vec3(0.0, 1.0, 0.0));
+		cameratransform = glm::translate(cameratransform, glm::vec3(-camera_x, -camera_y, -camera_z));
+		unsigned int cameraLocation = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation, 1, GL_FALSE, glm::value_ptr(cameratransform));
+
+		glm::mat4 perspect = glm::mat4(1.0f);
+		perspect = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect = glm::translate(perspect, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(perspect));
+
+		int cameraPosLocation = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation, 1, glm::value_ptr(cameraPos));
+		int lightPosLocation = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation, x_1, y_1, z_1);
+		int lightColorLocation = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		if (left_button == true && arrow_on == false)
+		{
+			line.Draw(s_program);
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			circle[i].Draw(s_program);
+		}
+
+
+		background.Draw(s_program, stage);
+
+		arrow.Draw(s_program);
+		bow.Draw(s_program);
+
+		if (stage == 1)
+		{
+			for (int i = 0; i < GRASS_SIZE; i++)
+			{
+				grass[i].Draw(s_program);
+			}
+		}
+
+		if (stage == 3)
+		{
+			for (int i = 0; i < SNOW_SIZE; i++)
+			{
+				snow[i].Draw(s_program);
+			}
+		}
+
+		if (particle_on)
+		{
+			for (int i = 0; i < CUBE_SIZE; ++i)
+			{
+				paticle[i].Draw(s_program);
+			}
+		}
+
+
+		glViewport(800, 700, 100, 100);
+		cameratransform1 = glm::mat4(1.0f);
+		cameratransform1 = glm::rotate(cameratransform1, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform1 = glm::rotate(cameratransform1, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation1 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation1, 1, GL_FALSE, glm::value_ptr(cameratransform1));
+
+		glm::mat4 perspect1 = glm::mat4(1.0f);
+		perspect1 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect1 = glm::translate(perspect1, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation1 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation1, 1, GL_FALSE, glm::value_ptr(perspect1));
+
+		int cameraPosLocation1 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation1, 1, glm::value_ptr(cameraPos));
+		int lightPosLocation1 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation1, x_1, y_1, z_1);
+		int lightColorLocation1 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation1, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw(s_program);
+
+		glViewport(900, 700, 100, 100);
+		cameratransform2 = glm::mat4(1.0f);
+		cameratransform2 = glm::rotate(cameratransform2, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform2 = glm::rotate(cameratransform2, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation2 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation2, 1, GL_FALSE, glm::value_ptr(cameratransform2));
+
+		glm::mat4 perspect2 = glm::mat4(1.0f);
+		perspect2 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect2 = glm::translate(perspect2, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation2 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation2, 1, GL_FALSE, glm::value_ptr(perspect2));
+
+		int cameraPosLocation2 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation2, 1, glm::value_ptr(cameraPos));
+		int lightPosLocation2 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation2, x_1, y_1, z_1);
+		int lightColorLocation2 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation1, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw1(s_program, number_10);
+
+		glViewport(1000, 700, 100, 100);
+		cameratransform3 = glm::mat4(1.0f);
+		cameratransform3 = glm::rotate(cameratransform3, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform3 = glm::rotate(cameratransform3, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation3 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation3, 1, GL_FALSE, glm::value_ptr(cameratransform3));
+
+		glm::mat4 perspect3 = glm::mat4(1.0f);
+		perspect3 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect3 = glm::translate(perspect3, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation3 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation3, 1, GL_FALSE, glm::value_ptr(perspect3));
+
+		int cameraPosLocation3 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation3, 1, glm::value_ptr(cameraPos));
+		int lightPosLocation3 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation3, x_1, y_1, z_1);
+		int lightColorLocation3 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation3, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw2(s_program, number_1);
+
+		switch (wind_dir) {
+		case 1:
+			wind_angle_z = -90;
+			break;
+		case 2:
+			wind_angle_z = -45;
+			break;
+		case 3:
+			wind_angle_z = -0;
+			break;
+		case 4:
+			wind_angle_z = 45;
+			break;
+		case 5:
+			wind_angle_z = 90;
+			break;
+		case 6:
+			wind_angle_z = 135;
+			break;
+		case 7:
+			wind_angle_z = 180;
+			break;
+		case 8:
+			wind_angle_z = 225;
+			break;
+		}
+		glViewport(1500, 700, 100, 100);
+		cameratransform4 = glm::mat4(1.0f);
+		cameratransform4 = glm::rotate(cameratransform4, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform4 = glm::rotate(cameratransform4, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		cameratransform4 = glm::rotate(cameratransform4, (float)glm::radians(wind_angle_z), glm::vec3(0.0, 0.0, 1.0));
+		unsigned int cameraLocation4 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation4, 1, GL_FALSE, glm::value_ptr(cameratransform4));
+
+
+		glm::mat4 perspect4 = glm::mat4(1.0f);
+		perspect4 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect4 = glm::translate(perspect4, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation4 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation4, 1, GL_FALSE, glm::value_ptr(perspect4));
+
+		int cameraPosLocation4 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation4, 1, glm::value_ptr(cameraPos));
+		int lightPosLocation4 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation4, x_1, y_1, z_1);
+		int lightColorLocation4 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation4, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw3(s_program, wind_dir);
+
+		glViewport(1500, 600, 100, 100);
+		cameratransform5 = glm::mat4(1.0f);
+		cameratransform5 = glm::rotate(cameratransform5, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform5 = glm::rotate(cameratransform5, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation5 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation5, 1, GL_FALSE, glm::value_ptr(cameratransform5));
+
+		glm::mat4 perspect5 = glm::mat4(1.0f);
+		perspect5 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect5 = glm::translate(perspect5, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation5 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation5, 1, GL_FALSE, glm::value_ptr(perspect5));
+
+		int cameraPosLocation5 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation5, 1, glm::value_ptr(cameraPos));
+		int lightPosLocation5 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation5, x_1, y_1, z_1);
+		int lightColorLocation5 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation5, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw4(s_program, wind_speed);
+	}
+	else if (main_loading)
+	{
+		glViewport(700, -100, 1000, 1000);
 		cameratransform5 = glm::mat4(1.0f);
 		cameratransform5 = glm::rotate(cameratransform5, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
 		cameratransform5 = glm::rotate(cameratransform5, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));

@@ -1,5 +1,5 @@
 #include "..\..\Common.h"
-#include <gl/glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #define SERVERPORT 9000
 #define BUFSIZE    512
