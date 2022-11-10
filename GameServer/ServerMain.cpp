@@ -1,8 +1,19 @@
-#include "..\..\Common.h"
+#include "Common.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <random>
 
 #define SERVERPORT 9000
 #define BUFSIZE    512
+
+const int CIRCLENUMWIDTH = 5;
+const int CIRCLENUMHEIGHT = 5;
+const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT;
+
+enum  CIRCLE_STATE {
+	CIRCLE_ON = 0,
+	CIRCLE_PARTICLE,
+	CIRCLE_OFF
+};
 
 struct Packet {
 	float x_angle, y_angle; // 플레이어의 시야 각도 값
@@ -11,14 +22,26 @@ struct Packet {
 	short total_score; // 플레이어의 현재 점수
 	short wind_dir; // 바람의 방향
 	float wind_speed; // 바람의 세기
-	short circleState[25]; // 과녁의 상태
+	short circleState[CIRCLENUM]; // 과녁의 상태
 };
 
 struct InitPacket {
-	float circleCenter[25]; // 과녁의 중앙의 위치 값
-	float player1Pos; // 플레이어 1의 위치
-	float player2Pos; // 플레이어 2의 위치
+	glm::vec3 circleCenter[CIRCLENUM]; // 과녁의 중앙의 위치 값
+	glm::vec3 player1Pos; // 플레이어 1의 위치
+	glm::vec3 player2Pos; // 플레이어 2의 위치
 };
+
+short g_circleState[CIRCLENUM];
+
+InitPacket InitializePacket();
+
+//std::random_device rd;
+//std::default_random_engine dre(rd());
+
+std::default_random_engine dre;
+std::uniform_real_distribution<float> urd{ 50.f, 90.f };
+
+InitPacket g_InitPacket;
 
 int main(int argc, char* argv[])
 {
@@ -28,6 +51,8 @@ int main(int argc, char* argv[])
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
+
+	g_InitPacket = InitializePacket();
 
 	// 소켓 생성
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -83,4 +108,22 @@ int main(int argc, char* argv[])
 	// 윈속 종료
 	WSACleanup();
 	return 0;
+}
+
+InitPacket InitializePacket()
+{
+	InitPacket packet;
+
+	for (int i = 0; i < CIRCLENUMWIDTH; ++i) {
+		for (int j = 0; j < CIRCLENUMHEIGHT; ++j) {
+			packet.circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f,  urd(dre));
+			g_circleState[5 * i + j] = CIRCLE_ON;
+			//printf("%f, %f %f\n", packet.circleCenter[5 * i + j].x, packet.circleCenter[5 * i + j].y, packet.circleCenter[5 * i + j].z);
+		}
+	}
+
+	packet.player1Pos = glm::vec3(-10.f, 0, 0);
+	packet.player2Pos = glm::vec3(10.f, 0, 0);
+
+	return packet;
 }
