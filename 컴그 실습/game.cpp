@@ -1732,6 +1732,7 @@ void Timer(int value)
 	}
 	else
 	{
+		// wind_timer 여기부터
 		if (wind_timer <= 0)
 		{
 			if (stage == 0)
@@ -1758,6 +1759,7 @@ void Timer(int value)
 		{
 			wind_timer -= 1;
 		}
+		// wind_timer 여기까지 끌어옴
 	}
 
 	if (particle_on)

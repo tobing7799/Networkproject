@@ -1,6 +1,8 @@
 #include "Common.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <random>
+#include <time.h>
+#include <math.h>
 
 #define SERVERPORT 9000
 #define BUFSIZE    512
@@ -8,6 +10,8 @@
 const int CIRCLENUMWIDTH = 5;
 const int CIRCLENUMHEIGHT = 5;
 const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT;
+
+int stage = 0; // 스테이지 넘버
 
 enum  CIRCLE_STATE {
 	CIRCLE_ON = 0,
@@ -42,6 +46,37 @@ std::default_random_engine dre;
 std::uniform_real_distribution<float> urd{ 50.f, 90.f };
 
 InitPacket g_InitPacket;
+
+void windTimer(short winddir, float windspeed) {
+	static int wind_timer = 1000;
+	if (wind_timer <= 0)
+	{
+		if (stage == 0)
+		{
+			windspeed = 0.0;
+		}
+		else if (stage == 1)
+		{
+			windspeed = ((float)(rand() % 21) / 10);
+		}
+		else if (stage == 2)
+		{
+			windspeed = ((float)(rand() % 41) / 10);
+		}
+		else if (stage == 3)
+		{
+			windspeed = ((float)(rand() % 91) / 10);
+		}
+		wind_timer = 1000;
+		winddir = rand() % 9;
+		std::cout << winddir << std::endl;
+	}
+	else
+	{
+		wind_timer -= 1;
+	}
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -118,7 +153,7 @@ InitPacket InitializePacket()
 		for (int j = 0; j < CIRCLENUMHEIGHT; ++j) {
 			packet.circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f,  urd(dre));
 			g_circleState[5 * i + j] = CIRCLE_ON;
-			//printf("%f, %f %f\n", packet.circleCenter[5 * i + j].x, packet.circleCenter[5 * i + j].y, packet.circleCenter[5 * i + j].z);
+			printf("%f, %f %f\n", packet.circleCenter[5 * i + j].x, packet.circleCenter[5 * i + j].y, packet.circleCenter[5 * i + j].z);
 		}
 	}
 
