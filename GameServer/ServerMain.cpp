@@ -47,6 +47,29 @@ std::uniform_real_distribution<float> urd{ 50.f, 90.f };
 
 InitPacket g_InitPacket;
 
+int client_index = 0;
+
+HANDLE hReadEvent[2];
+HANDLE hWriteEvent[2];
+
+DWORD WINAPI ClientMgr() {
+	DWORD retval;
+	if (client_index < 2) {
+		// 아무도없거나 한명일때 처리하는 부분 넣어야됨.
+	}
+	while (client_index == 2) { // 두명일때
+		for (int i = 0; i < 2; ++i) {
+			retval = WaitForSingleObject(hReadEvent[i], INFINITE);
+			if (retval != WAIT_OBJECT_0)
+				break;
+		}
+	}
+
+	return 0;
+}
+
+
+
 void windTimer(short winddir, float windspeed) {
 	static int wind_timer = 1000;
 	if (wind_timer <= 0)
@@ -93,6 +116,7 @@ int main(int argc, char* argv[])
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
 
+	
 	// bind()
 	struct sockaddr_in serveraddr;
 	memset(&serveraddr, 0, sizeof(serveraddr));
