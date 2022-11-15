@@ -62,6 +62,9 @@ Grass grass[GRASS_SIZE];
 CubeMap background;
 Arrow arrow;
 Circle circle[10];
+
+Circle circleTest[25][10];
+
 Line line;
 Board board;
 Bow bow;
@@ -150,6 +153,8 @@ bool main_loading = true;
 
 GLenum Mode = GL_FILL;
 
+glm::vec3 circleCenter[25];
+
 void main(int argc, char* argv[])
 {
 	if (argc > 1) SERVERIP = argv[1]; // default local
@@ -197,6 +202,13 @@ void main(int argc, char* argv[])
 		paticle[i].Readobj(cube);
 	}
 
+	// 임시 Center
+	for (int i = 0; i < 5; ++i) {
+		for (int j = 0; j < 5; ++j) {
+			circleCenter[5 * i + j] = glm::vec3((i - 5 / 2) * 10.f, (j - 5 / 2) * 10.f, rand() % 50 + 40.f);
+		}
+	}
+	
 	InitShader();
 	InitBuffer();
 	InitTexture();
@@ -241,6 +253,14 @@ void main(int argc, char* argv[])
 	{
 		circle[i].modelmatrix.position.z += 90.01 + 0.001 * i;
 		circle[i].modelmatrix.scale = glm::vec3(i * 0.1 + 0.1, i * 0.1 + 0.1, 1.0);
+	}
+
+	for (int i = 0; i < 25; ++i) {
+		for (int j = 0; j < 10; ++j) {
+			circleTest[i][j].modelmatrix.position = circleCenter[i];
+			circleTest[i][j].modelmatrix.position.z += 0.001 * j;
+			circleTest[i][j].modelmatrix.scale = glm::vec3(j * 0.1 + 0.1, j * 0.1 + 0.1, 1.0);
+		}
 	}
 
 	line.modelmatrix.scale = glm::vec3(1.0, 1.0, 1.0);
@@ -359,6 +379,12 @@ GLvoid drawScene()
 		for (int i = 0; i < 10; i++)
 		{
 			circle[i].Draw(s_program);
+		}
+
+		for (int i = 0; i < 25; ++i) {
+			for (int j = 0; j < 10; ++j) {
+				circleTest[i][j].Draw(s_program);
+			}
 		}
 
 
@@ -651,6 +677,11 @@ GLvoid drawScene()
 			circle[i].Draw(s_program);
 		}
 
+		for (int i = 0; i < 25; ++i) {
+			for (int j = 0; j < 10; ++j) {
+				circleTest[i][j].Draw(s_program);
+			}
+		}
 
 		background.Draw(s_program, stage);
 
@@ -949,6 +980,27 @@ void InitBuffer()
 	circle[7].Update(0.4, 0.4, 0.4);
 	circle[8].Update(0.6, 0.6, 0.6);
 	circle[9].Update(0.8, 0.8, 0.8);
+
+	for (int i = 0; i < 25; ++i) {
+		for (int j = 0; j < 10; j++)
+		{
+			circleTest[i][j].Initialize();
+		}
+	}
+	//과녁 위치
+	for (int i = 0; i < 25; ++i) {
+
+			circleTest[i][0].Update(1.0, 1.0, 0.7);
+			circleTest[i][1].Update(1.0, 1.0, 0.0);
+			circleTest[i][2].Update(1.0, 0.2, 0.2);
+			circleTest[i][3].Update(1.0, 0.0, 0.0);
+			circleTest[i][4].Update(0.2, 0.2, 1.0);
+			circleTest[i][5].Update(0.0, 0.0, 1.0);
+			circleTest[i][6].Update(0.2, 0.2, 0.2);
+			circleTest[i][7].Update(0.4, 0.4, 0.4);
+			circleTest[i][8].Update(0.6, 0.6, 0.6);
+			circleTest[i][9].Update(0.8, 0.8, 0.8);
+	}
 
 	for (int i = 0; i < SNOW_SIZE; i++)
 	{
