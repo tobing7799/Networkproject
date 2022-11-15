@@ -70,6 +70,10 @@ Board board;
 Bow bow;
 Cube paticle[CUBE_SIZE];
 
+Arrow otherArrow;
+Bow otherBow;
+
+
 MCI_OPEN_PARMS m_mciOpenParms;
 MCI_PLAY_PARMS m_mciPlayParms;
 DWORD m_dwDeviceID;
@@ -197,6 +201,11 @@ void main(int argc, char* argv[])
 	bow.Readobj(bowvertex);
 	bow.Readuv(bowuv);
 
+	otherArrow.Readobj(arrowfile);
+	otherArrow.Readuv(arrowuv);
+	otherBow.Readobj(bowvertex);
+	otherBow.Readuv(bowuv);
+
 	for (int i = 0; i < CUBE_SIZE; ++i)
 	{
 		paticle[i].Readobj(cube);
@@ -237,6 +246,10 @@ void main(int argc, char* argv[])
 	arrow.objectmatrix.position = glm::vec3(0.07, 0.0, 0.5);
 	background.modelmatrix.scale = glm::vec3(100.0, 100.0, 100.0);
 	background.modelmatrix.position = glm::vec3(0.0, 15.0, 45.0);
+
+	otherArrow.modelmatrix.scale = glm::vec3(0.6, 0.6, 0.6);
+	otherArrow.objectmatrix.position = glm::vec3(-0.60, 0.0, 0.5);
+	otherBow.objectmatrix.position = glm::vec3(otherArrow.objectmatrix.position.x - 0.07, otherArrow.objectmatrix.position.y, 0.0);
 
 	stage = 0;
 	mciOpen.lpstrElementName = "ºê±Ý1.mp3";
@@ -392,6 +405,9 @@ GLvoid drawScene()
 
 		arrow.Draw(s_program);
 		bow.Draw(s_program);
+
+		otherArrow.Draw(s_program);
+		otherBow.Draw(s_program);
 
 		if (stage == 1)
 		{
@@ -688,6 +704,9 @@ GLvoid drawScene()
 		arrow.Draw(s_program);
 		bow.Draw(s_program);
 
+		otherArrow.Draw(s_program);
+		otherBow.Draw(s_program);
+
 		if (stage == 1)
 		{
 			for (int i = 0; i < GRASS_SIZE; i++)
@@ -963,6 +982,9 @@ void InitBuffer()
 	line.Initialize();
 	board.Initialize();
 	bow.Initialize();
+
+	otherArrow.Initialize();
+	otherBow.Initialize();
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -1934,6 +1956,10 @@ void Timer(int value)
 		arrow_angle_y = -x_angle * PI / 180.0;
 		arrow.modelmatrix.rotation.x = -atanf(arrow_angle_y) * (180.0 / PI);
 		bow.modelmatrix.rotation.x = -atanf(arrow_angle_y) * (180.0 / PI);
+
+		otherArrow.modelmatrix.rotation.x = arrow.modelmatrix.rotation.x;
+		otherArrow.objectmatrix.position.z = -v * 0.01 + 0.5;
+		otherBow.modelmatrix.rotation.x = bow.modelmatrix.rotation.x;
 	}
 	else if (left_button == false && arrow_on == false)
 	{
