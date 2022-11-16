@@ -4,8 +4,6 @@ void Circle::Initialize()
 {
 	colordata = (glm::vec4*)malloc(sizeof(glm::vec4) * 360);
 	vertexdata = (glm::vec3*)malloc(sizeof(glm::vec3) * 360);
-	normaldata = (glm::vec3*)malloc(sizeof(glm::vec3) * 360);
-	uvdata = (glm::vec2*)malloc(sizeof(glm::vec2) * 360);
 
 	for (int i = 0; i < 360; i++)
 	{
@@ -22,19 +20,9 @@ void Circle::Initialize()
 		colordata[i] = glm::vec4(1.0, 1.0, 1.0, 1.0);
 	}
 
-	for (int i = 0; i < 360; i++)
-	{
-		normaldata[i] = glm::vec3(0.0, 0.0, 0.0);
-	}
-
-	for (int i = 0; i < 360; i++)
-	{
-		uvdata[i] = glm::vec2(1.0, 1.0);
-	}
-
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-	glGenBuffers(4, vbo);
+	glGenBuffers(2, vbo);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, 360 * sizeof(glm::vec3), vertexdata, GL_STATIC_DRAW);
@@ -45,16 +33,6 @@ void Circle::Initialize()
 	glBufferData(GL_ARRAY_BUFFER, 360 * sizeof(glm::vec4), colordata, GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, 360 * sizeof(glm::vec3), normaldata, GL_STATIC_DRAW);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(2);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-	glBufferData(GL_ARRAY_BUFFER, 360 * sizeof(glm::vec2), uvdata, GL_STATIC_DRAW);
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(3);
 }
 void Circle::Update(float color_r, float color_g, float color_b)
 {
