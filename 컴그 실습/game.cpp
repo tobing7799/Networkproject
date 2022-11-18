@@ -15,6 +15,7 @@
 #include "Common.h"
 
 char* SERVERIP = (char*)"127.0.0.2"; // default local
+#define SERVERPORT 9000
 
 char* filetobuf(const char* file);
 void InitBuffer();
@@ -34,6 +35,12 @@ GLvoid mouseWheel(int button, int dir, int x, int y);
 GLvoid Reshape(int w, int h);
 GLvoid Keyborad(unsigned char key, int x, int y);
 GLvoid Keyborad_up(unsigned char key, int x, int y);
+
+bool CreateSocekt();
+
+SOCKET sock;
+sockaddr_in serveraddr;
+int retval;
 
 glm::mat4 cameratransform;
 glm::mat4 cameratransform1;
@@ -2216,4 +2223,19 @@ GLvoid mouseWheel(int button, int dir, int x, int y)
 		}
 	}
 	glutPostRedisplay();
+}
+
+bool CreateSocekt()
+{
+	memset(&serveraddr, 0, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	inet_pton(AF_INET, SERVERIP, &serveraddr.sin_addr);
+	serveraddr.sin_port = htons(SERVERPORT);
+	retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+	if (retval == SOCKET_ERROR) err_quit("connect()");
+
+	//
+	//데이터 연결을 성공했을 시에 DataComm을 실행할 곳
+	//
+
 }
