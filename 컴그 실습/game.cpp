@@ -159,6 +159,12 @@ GLenum Mode = GL_FILL;
 
 glm::vec3 circleCenter[25];
 
+struct Packet {
+	float x_angle, y_angle; // 플레이어의 시야 각도 값
+	glm::vec3 arrowPosition; // 화살의 좌표 값
+	glm::vec3 arrowRotation;
+};
+
 void main(int argc, char* argv[])
 {
 	if (argc > 1) SERVERIP = argv[1]; // default local
