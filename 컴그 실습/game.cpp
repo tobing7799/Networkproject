@@ -166,11 +166,28 @@ GLenum Mode = GL_FILL;
 
 glm::vec3 circleCenter[25];
 
+bool connectState = false;
+
 struct Packet {
 	float x_angle, y_angle; // 플레이어의 시야 각도 값
 	glm::vec3 arrowPosition; // 화살의 좌표 값
 	glm::vec3 arrowRotation;
 };
+
+void DataComm() { 
+	if (connectState) {
+		Packet p;
+		retval = recv(sock, (char*)&p, sizeof(p), MSG_WAITALL);
+		if (retval == SOCKET_ERROR) {
+			err_display("recv()");
+			return;
+		}
+		x_angle = p.x_angle;
+		y_angle = p.y_angle;
+		arrow.objectmatrix.position = p.arrowPosition;
+		arrow.objectmatrix.rotation = p.arrowRotation;
+	}
+}
 
 void main(int argc, char* argv[])
 {
