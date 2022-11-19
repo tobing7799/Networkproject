@@ -16,6 +16,10 @@
 
 char* SERVERIP = (char*)"127.0.0.2"; // default local
 #define SERVERPORT 9000
+const int CIRCLENUMWIDTH = 5;
+const int CIRCLENUMHEIGHT = 5;
+const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT; //서버에서 보내주는 것으로 바꿔야함
+
 
 char* filetobuf(const char* file);
 void InitBuffer();
@@ -172,6 +176,12 @@ struct Packet {
 	float x_angle, y_angle; // 플레이어의 시야 각도 값
 	glm::vec3 arrowPosition; // 화살의 좌표 값
 	glm::vec3 arrowRotation;
+};
+
+struct InitPacket {
+	glm::vec3 circleCenter[CIRCLENUM]; // 과녁의 중앙의 위치 값
+	glm::vec3 player1Pos; // 플레이어 1의 위치
+	glm::vec3 player2Pos; // 플레이어 2의 위치
 };
 
 void DataComm() { 
@@ -388,6 +398,10 @@ GLvoid drawScene()
 
 	if (main_loading == false)
 	{
+		if (connectState)
+		{
+			DataComm();
+		}
 		cameratransform = glm::mat4(1.0f);
 		cameratransform = glm::rotate(cameratransform, (float)glm::radians(x_angle), glm::vec3(1.0, 0.0, 0.0));
 		cameratransform = glm::rotate(cameratransform, (float)glm::radians(y_angle + 180.0), glm::vec3(0.0, 1.0, 0.0));
@@ -2164,6 +2178,7 @@ GLvoid Keyborad(unsigned char key, int x, int y)
 	case 't':
 	case 'T':
 		main_loading = false;
+		connectState=CreateSocekt();
 		break;
 	case 27: // Escape
 		// 소켓 삭제 ------------
@@ -2244,15 +2259,25 @@ GLvoid mouseWheel(int button, int dir, int x, int y)
 
 bool CreateSocekt()
 {
+	InitPacket InitPacket;
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
 	inet_pton(AF_INET, SERVERIP, &serveraddr.sin_addr);
 	serveraddr.sin_port = htons(SERVERPORT);
 	retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
-	if (retval == SOCKET_ERROR) err_quit("connect()");
+	if (retval == SOCKET_ERROR)
+	{
+		err_quit("connect()");
+		return false;
+	}
+	//데이터 연결을 성공했을 시에 초기데이터를 받는 곳
+	retval = recv(sock, (char*)&InitPacket, sizeof(InitPacket), MSG_WAITALL);
+	if (retval == SOCKET_ERROR) {
+		err_display("recv()");
+		return true;
+	}
 
-	//
-	//데이터 연결을 성공했을 시에 DataComm을 실행할 곳
-	//
+	return true;
+
 
 }
