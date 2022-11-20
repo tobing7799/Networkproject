@@ -178,6 +178,16 @@ struct Packet {
 	glm::vec3 arrowRotation;
 };
 
+struct InPacket {
+	float x_angle, y_angle; // 플레이어의 시야 각도 값
+	glm::vec3 arrowPosition; // 화살의 좌표 값;
+	glm::vec3 arrowRotation; // 화살의 회전 값;
+	short total_score; // 플레이어의 현재 점수
+	short wind_dir; // 바람의 방향
+	float wind_speed; // 바람의 세기
+	short circleState[CIRCLENUM]; // 과녁의 상태
+};
+
 struct InitPacket {
 	glm::vec3 circleCenter[CIRCLENUM]; // 과녁의 중앙의 위치 값
 	glm::vec3 player1Pos; // 플레이어 1의 위치
@@ -186,16 +196,31 @@ struct InitPacket {
 
 void DataComm() { 
 	if (connectState) {
-		Packet p;
-		retval = recv(sock, (char*)&p, sizeof(p), MSG_WAITALL);
+		Packet packet;
+		packet.x_angle = x_angle;
+		packet.y_angle = y_angle;
+		packet.arrowPosition = arrow.objectmatrix.position;
+		packet.arrowRotation = arrow.objectmatrix.rotation;
+		
+		retval = send(sock, (char*)&packet, sizeof(packet), 0);
+		if (retval == SOCKET_ERROR) {
+			err_display("send()");
+			return;
+		}
+
+
+		InPacket inPacket;
+		retval = recv(sock, (char*)&inPacket, sizeof(inPacket), MSG_WAITALL);
 		if (retval == SOCKET_ERROR) {
 			err_display("recv()");
 			return;
 		}
-		x_angle = p.x_angle;
-		y_angle = p.y_angle;
-		arrow.objectmatrix.position = p.arrowPosition;
-		arrow.objectmatrix.rotation = p.arrowRotation;
+		x_angle = inPacket.x_angle;
+		y_angle = inPacket.y_angle;
+		arrow.objectmatrix.position = inPacket.arrowPosition;
+		arrow.objectmatrix.rotation = inPacket.arrowRotation;
+		wind_dir = inPacket.wind_dir;
+		wind_speed = inPacket.wind_speed;	
 	}
 }
 
