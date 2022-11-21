@@ -2084,14 +2084,6 @@ GLvoid Keyborad(unsigned char key, int x, int y)
 		keybuffer[key] = true;
 	}
 	switch (key) {
-	case 'Q':
-	case 'q':
-		if (pass == false)
-		{
-			pass = true;
-			total_score = 30;
-		}
-		break;
 	case 'o':
 	case 'O':
 		if (arrow_on == false && left_button)
@@ -2166,47 +2158,16 @@ GLvoid Keyborad(unsigned char key, int x, int y)
 		camera_y = 0.2;
 		camera_z = 0.6;
 		break;
-	case 'l':
-	case 'L':
-		if (arrow_on == false)
-		{
-			bezier_x1 = (((float)(rand() % 1201) / 10) - 60.0);
-			bezier_x2 = (((float)(rand() % 1201) / 10) - 60.0);
-			bezier_y1 = (((float)(rand() % 1201) / 10) - 60.0);
-			bezier_y2 = (((float)(rand() % 1201) / 10) - 60.0);
-			bezier_z1 = ((float)(rand() % 501) / 10);
-			bezier_z2 = (((float)(rand() % 201) / 10) + 50.0);
-			arrow_on = true;
-			bezier = true;
-			score_on = false;
-		}
-		break;
-	case 'u':
-	case 'U':
-		replay = true;
-		t = 0;
-		camera_x = 0.2;
-		camera_y = 0.2;
-		camera_z = 0.6;
-		arrow_x = 0.07;
-		arrow_y = 0;
-		arrow_z = 0.5;
-		arrow.objectmatrix.position = glm::vec3(0.0, 0.0, 0.0);
-		break;
-	case 'p':
-	case 'P':
-		if (pass == false)
-		{
-			pass = true;
-		}
-		break;
 	case 't':
 	case 'T':
 		main_loading = false;
+		sock = socket(AF_INET, SOCK_STREAM, 0);
+		if (sock == INVALID_SOCKET) err_quit("socket()");
 		connectState=CreateSocekt();
 		break;
 	case 27: // Escape
 		// 소켓 삭제 ------------
+		closesocket(sock);
 		WSACleanup();
 		glutLeaveMainLoop();
 	default:
