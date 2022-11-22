@@ -81,7 +81,12 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 	DWORD retval;
 
 	// 초기화값 전송
-	// 초기화값을 어디서 보내는게 좋을까용
+	DWORD wh = MAKEWORD(CIRCLENUMWIDTH, CIRCLENUMHEIGHT);
+	retval = send(client_sock, (char*)&wh, sizeof(DWORD), 0);
+	if (retval == SOCKET_ERROR) {
+		err_display("send()");
+		return 1;
+	}
 	retval = send(client_sock, (char*)&g_InitPacket, sizeof(InitPacket), 0);
 	if (retval == SOCKET_ERROR) {
 		err_display("send()");
@@ -234,9 +239,6 @@ int main(int argc, char* argv[])
 		//inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
 		//printf("\n[TCP 서버] 클라이언트 접속: IP 주소=%s, 포트 번호=%d\n", addr, ntohs(clientaddr.sin_port));
 
-		// 소켓 닫기
-		closesocket(client_sock[0]);
-		closesocket(client_sock[1]);
 		//printf("[TCP 서버] 클라이언트 종료: IP 주소=%s, 포트 번호=%d\n", addr, ntohs(clientaddr.sin_port));
 	}
 
