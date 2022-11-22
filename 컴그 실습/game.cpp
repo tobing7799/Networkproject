@@ -277,11 +277,12 @@ void main(int argc, char* argv[])
 	}
 
 	// 임시 Center
-	for (int i = 0; i < 5; ++i) {
+	/*for (int i = 0; i < 5; ++i) {
 		for (int j = 0; j < 5; ++j) {
 			circleCenter[5 * i + j] = glm::vec3((i - 5 / 2) * 10.f, (j - 5 / 2) * 10.f, rand() % 50 + 40.f);
+			std::cout << circleCenter[5 * i + j].x << ", " << circleCenter[5 * i + j].y << ", " << circleCenter[5 * i + j].z << std::endl;
 		}
-	}
+	}*/
 	
 	InitShader();
 	InitBuffer();
@@ -333,13 +334,13 @@ void main(int argc, char* argv[])
 		circle[i].modelmatrix.scale = glm::vec3(i * 0.1 + 0.1, i * 0.1 + 0.1, 1.0);
 	}
 
-	for (int i = 0; i < 25; ++i) {
+	/*for (int i = 0; i < 25; ++i) {
 		for (int j = 0; j < 10; ++j) {
 			circleTest[i][j].modelmatrix.position = circleCenter[i];
 			circleTest[i][j].modelmatrix.position.z += 0.001 * j;
 			circleTest[i][j].modelmatrix.scale = glm::vec3(j * 0.1 + 0.1, j * 0.1 + 0.1, 1.0);
 		}
-	}
+	}*/
 
 	line.modelmatrix.scale = glm::vec3(1.0, 1.0, 1.0);
 	board.modelmatrix.scale = glm::vec3(1.0, 1.0, 1.0);
@@ -2256,11 +2257,33 @@ bool CreateSocekt()
 		err_quit("connect()");
 		return false;
 	}
+
 	//데이터 연결을 성공했을 시에 초기데이터를 받는 곳
+	DWORD wh = MAKEWORD(CIRCLENUMWIDTH, CIRCLENUMHEIGHT);
+	retval = recv(sock, (char*)&wh, sizeof(wh), MSG_WAITALL);
+	if (retval == SOCKET_ERROR) {
+		err_display("recv() wh");
+		return true;
+	}
 	retval = recv(sock, (char*)&InitPacket, sizeof(InitPacket), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) {
-		err_display("recv()");
+		err_display("recv() InitPacket");
 		return true;
+	}
+	
+	for (int i = 0; i < 5; ++i) {
+		for (int j = 0; j < 5; ++j) {
+			circleCenter[5 * i + j] = InitPacket.circleCenter[5 * i + j];
+			printf("%f, %f %f\n", circleCenter[5 * i + j].x, circleCenter[5 * i + j].y, circleCenter[5 * i + j].z);
+		}
+	}
+
+	for (int i = 0; i < 25; ++i) {
+		for (int j = 0; j < 10; ++j) {
+			circleTest[i][j].modelmatrix.position = circleCenter[i];
+			circleTest[i][j].modelmatrix.position.z += 0.001 * j;
+			circleTest[i][j].modelmatrix.scale = glm::vec3(j * 0.1 + 0.1, j * 0.1 + 0.1, 1.0);
+		}
 	}
 
 	return true;
