@@ -50,6 +50,8 @@ struct SocketWithIndex {
 short g_circleState[CIRCLENUM];
 
 InitPacket InitializePacket();
+void windTimer(short winddir, float windspeed);
+void CircleMgr();
 
 //std::random_device rd;
 //std::default_random_engine dre(rd());
@@ -266,4 +268,23 @@ InitPacket InitializePacket()
 	packet.player2Pos = glm::vec3(10.f, 0, 0);
 
 	return packet;
+}
+
+void CircleMgr()
+{
+	for (int i = 0; i < CIRCLENUM; ++i)
+	{
+		if (g_Packet->circleState[i] == CIRCLE_ON && 1)// 1 -> 만약 과녁이 충돌이 되었다면
+		{
+			g_Packet[0].circleState[i] = CIRCLE_PARTICLE;
+			g_Packet[1].circleState[i] = CIRCLE_PARTICLE;
+
+			//맞춘 클라의 점수를 올려주는 작업을 해야함.
+		}
+		else if (g_Packet->circleState[i] == CIRCLE_PARTICLE)
+		{
+			g_Packet[0].circleState[i] = CIRCLE_OFF;
+			g_Packet[1].circleState[i] = CIRCLE_OFF;
+		}
+	}
 }
