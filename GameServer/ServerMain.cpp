@@ -3,6 +3,7 @@
 #include <random>
 #include <time.h>
 #include <math.h>
+#include <algorithm>
 
 #define SERVERPORT 9000
 #define BUFSIZE    512
@@ -14,9 +15,9 @@ const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT;
 int stage = 0; // 스테이지 넘버
 
 enum  CIRCLE_STATE {
-	CIRCLE_ON = 0,
-	CIRCLE_PARTICLE,
-	CIRCLE_OFF
+	CIRCLE_OFF = 0,
+	CIRCLE_ON,
+	CIRCLE_PARTICLE
 };
 
 struct InPacket {
@@ -51,7 +52,9 @@ short g_circleState[CIRCLENUM];
 
 InitPacket InitializePacket();
 void windTimer(short winddir, float windspeed);
-void CircleMgr();
+void CircleMgr(const glm::vec3& pos, int index);
+
+bool ArrowCheck(const glm::vec3& pos, int circleIndex, int index);
 
 //std::random_device rd;
 //std::default_random_engine dre(rd());
@@ -60,8 +63,11 @@ std::default_random_engine dre;
 std::uniform_real_distribution<float> urd{ 50.f, 90.f };
 
 InitPacket g_InitPacket;
+glm::vec3 g_circleCenter[CIRCLENUM];
 
 int client_index = 0;
+
+int clientScore[2];
 
 HANDLE hReadEvent[2];
 HANDLE hWriteEvent[2];
@@ -106,6 +112,9 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 		else if (retval == 0)
 			break;
 
+		// 충돌체크 후 점수계산
+		CircleMgr(g_InPacket[index].arrowPosition, index);
+
 		// 현재 인덱스의 클라이언트 정보를 상대 클라이언트에게 넘겨줄 패킷에 저장
 		g_Packet[opositeIndex].arrowPosition = g_InPacket[index].arrowPosition;
 		g_Packet[opositeIndex].arrowRotation = g_InPacket[index].arrowRotation;
@@ -123,19 +132,6 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 
 	closesocket(client_sock);
 	return 0;
-
-	//if (client_index < 2) {
-	//	// 아무도없거나 한명일때 처리하는 부분 넣어야됨.
-	//}
-	//while (client_index == 2) { // 두명일때
-	//	for (int i = 0; i < 2; ++i) {
-	//		retval = WaitForSingleObject(hReadEvent[i], INFINITE);
-	//		if (retval != WAIT_OBJECT_0)
-	//			break;
-	//	}
-	//}
-
-	//return 0;
 }
 
 
@@ -258,33 +254,57 @@ InitPacket InitializePacket()
 
 	for (int i = 0; i < CIRCLENUMWIDTH; ++i) {
 		for (int j = 0; j < CIRCLENUMHEIGHT; ++j) {
-			packet.circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f,  urd(dre));
-			g_circleState[5 * i + j] = CIRCLE_ON;
-			printf("%f, %f %f\n", packet.circleCenter[5 * i + j].x, packet.circleCenter[5 * i + j].y, packet.circleCenter[5 * i + j].z);
+			g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f,  urd(dre));
+			g_circleState[5 * i + j] = CIRCLE_ON;		
 		}
 	}
-
+	std::sort(g_circleCenter, g_circleCenter + CIRCLENUM, [](const glm::vec3& a, const glm::vec3& b) {
+		return a.z > b.z;
+		});
+	for (int i = 0; i < CIRCLENUM; ++i) {
+		packet.circleCenter[i] = g_circleCenter[i];
+		printf("%f, %f %f\n", packet.circleCenter[i].x, packet.circleCenter[i].y, packet.circleCenter[i].z);
+	}
 	packet.player1Pos = glm::vec3(-10.f, 0, 0);
 	packet.player2Pos = glm::vec3(10.f, 0, 0);
 
 	return packet;
 }
 
-void CircleMgr()
+void CircleMgr(const glm::vec3& pos, int index)
 {
 	for (int i = 0; i < CIRCLENUM; ++i)
 	{
-		if (g_Packet->circleState[i] == CIRCLE_ON && 1)// 1 -> 만약 과녁이 충돌이 되었다면
+		if (g_circleState[i] == CIRCLE_ON)
 		{
-			g_Packet[0].circleState[i] = CIRCLE_PARTICLE;
-			g_Packet[1].circleState[i] = CIRCLE_PARTICLE;
-
-			//맞춘 클라의 점수를 올려주는 작업을 해야함.
+			if (ArrowCheck(pos, i, index)) {
+				g_Packet[0].circleState[i] = g_Packet[0].circleState[i] = g_circleState[i] = CIRCLE_PARTICLE;
+			}
 		}
-		else if (g_Packet->circleState[i] == CIRCLE_PARTICLE)
+		else if (g_circleState[i] == CIRCLE_PARTICLE)
 		{
-			g_Packet[0].circleState[i] = CIRCLE_OFF;
-			g_Packet[1].circleState[i] = CIRCLE_OFF;
+			g_Packet[0].circleState[i] = g_Packet[1].circleState[i] =  g_circleState[i] = CIRCLE_OFF;
 		}
 	}
+}
+
+bool ArrowCheck(const glm::vec3& pos, int circleIndex, int index)
+{
+	int score{};
+	if (pos.z < g_circleCenter[circleIndex].z)
+		return false;
+
+	if (pos.z > g_circleCenter[circleIndex].z && pos.z < g_circleCenter[circleIndex].z + 0.1) { // 일단 오차 0.1
+		score = 10;
+		for (int i = 0; i < 10; ++i) {
+			if (sqrt(pow(g_circleCenter[circleIndex].x - pos.x, 2.0) + pow(g_circleCenter[circleIndex].y - pos.y, 2.0)) <= (i * 0.1 + 0.1)) // wind_x, wind_y 일단 제외
+			{
+				if (score > i)
+					score = i;
+			}
+		}
+		clientScore[index] += 10 - score;
+		return true;
+	}
+	return false;
 }
