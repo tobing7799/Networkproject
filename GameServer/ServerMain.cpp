@@ -265,8 +265,8 @@ InitPacket InitializePacket()
 		packet.circleCenter[i] = g_circleCenter[i];
 		printf("%f, %f %f\n", packet.circleCenter[i].x, packet.circleCenter[i].y, packet.circleCenter[i].z);
 	}
-	packet.player1Pos = glm::vec3(-10.f, 0, 0);
-	packet.player2Pos = glm::vec3(10.f, 0, 0);
+	packet.player1Pos = glm::vec3(-1.f, 0, 0);
+	packet.player2Pos = glm::vec3(1.f, 0, 0);
 
 	return packet;
 }
