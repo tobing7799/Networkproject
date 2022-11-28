@@ -84,13 +84,15 @@ Cube paticle[CUBE_SIZE];
 Arrow otherArrow;
 Bow otherBow;
 
-
 MCI_OPEN_PARMS m_mciOpenParms;
 MCI_PLAY_PARMS m_mciPlayParms;
 DWORD m_dwDeviceID;
 MCI_OPEN_PARMS mciOpen;
 MCI_PLAY_PARMS mciPlay;
 int dwID;
+
+float other_x_angle = 0;
+float other_y_angle = 0;
 
 float ox = 0, oy = 0;
 float x_angle = 0;
@@ -104,10 +106,15 @@ float fovy = 45;
 float near_1 = 0.1;
 float far_1 = 200.0;
 float persfect_z = -2.0;
-float camera_x = 0.2;
-float camera_y = 0.2;
-float camera_z = 0.6;
+float camera_x = 0.0;
+float camera_y = 0.0;
+float camera_z = 0.0;
+
+float otherCamera_x = 0.0;
+float otherCamera_y = 0.0;
+float otherCamera_z = 0.0;
 glm::vec3 cameraPos{ camera_x, camera_y, camera_z };
+glm::vec3 otherCameraPos{ camera_x, camera_y, camera_z };
 
 bool keybuffer[256] = { 0, };
 float Light_R = 1.0f;
@@ -194,13 +201,15 @@ struct InitPacket {
 	glm::vec3 player2Pos; // 플레이어 2의 위치
 };
 
+InitPacket initPacket;
+
 void DataComm() { 
 	if (connectState) {
 		Packet packet;
 		packet.x_angle = x_angle;
 		packet.y_angle = y_angle;
 		packet.arrowPosition = arrow.objectmatrix.position;
-		packet.arrowRotation = arrow.objectmatrix.rotation;
+		packet.arrowRotation = arrow.modelmatrix.rotation;
 		
 		retval = send(sock, (char*)&packet, sizeof(packet), 0);
 		if (retval == SOCKET_ERROR) {
@@ -215,12 +224,12 @@ void DataComm() {
 			err_display("recv()");
 			return;
 		}
-		x_angle = inPacket.x_angle;
-		y_angle = inPacket.y_angle;
-		arrow.objectmatrix.position = inPacket.arrowPosition;
-		arrow.objectmatrix.rotation = inPacket.arrowRotation;
+		other_x_angle = inPacket.x_angle;
+		other_y_angle = inPacket.y_angle;
+		otherArrow.objectmatrix.position = inPacket.arrowPosition;
+		otherArrow.modelmatrix.rotation = inPacket.arrowRotation;
 		wind_dir = inPacket.wind_dir;
-		wind_speed = inPacket.wind_speed;	
+		wind_speed = inPacket.wind_speed;
 	}
 }
 
@@ -309,12 +318,13 @@ void main(int argc, char* argv[])
 	}
 
 	arrow.modelmatrix.scale = glm::vec3(0.6, 0.6, 0.6);
-	arrow.objectmatrix.position = glm::vec3(0.07, 0.0, 0.5);
 	background.modelmatrix.scale = glm::vec3(100.0, 100.0, 100.0);
 	background.modelmatrix.position = glm::vec3(0.0, 15.0, 45.0);
-
 	otherArrow.modelmatrix.scale = glm::vec3(0.6, 0.6, 0.6);
-	otherArrow.objectmatrix.position = glm::vec3(-0.60, 0.0, 0.5);
+
+	arrow.objectmatrix.position = glm::vec3(0.0, 0.0, 0.0);
+	otherArrow.objectmatrix.position = glm::vec3(0.0, 0.0, 0.0);
+	bow.objectmatrix.position = glm::vec3(arrow.objectmatrix.position.x - 0.07, arrow.objectmatrix.position.y, 0.0);
 	otherBow.objectmatrix.position = glm::vec3(otherArrow.objectmatrix.position.x - 0.07, otherArrow.objectmatrix.position.y, 0.0);
 
 	stage = 0;
@@ -422,12 +432,13 @@ GLvoid drawScene()
 	glUseProgram(s_program);
 	glPolygonMode(GL_FRONT, Mode);
 
+	if (connectState)
+	{
+		DataComm();
+	}
+
 	if (main_loading == false)
 	{
-		if (connectState)
-		{
-			DataComm();
-		}
 		cameratransform = glm::mat4(1.0f);
 		cameratransform = glm::rotate(cameratransform, (float)glm::radians(x_angle), glm::vec3(1.0, 0.0, 0.0));
 		cameratransform = glm::rotate(cameratransform, (float)glm::radians(y_angle + 180.0), glm::vec3(0.0, 1.0, 0.0));
@@ -728,10 +739,10 @@ GLvoid drawScene()
 	if (main_loading == false)
 	{
 		cameratransform = glm::mat4(1.0f);
-		cameratransform = glm::rotate(cameratransform, (float)glm::radians(x_angle), glm::vec3(1.0, 0.0, 0.0));
-		cameratransform = glm::rotate(cameratransform, (float)glm::radians(y_angle + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		cameratransform = glm::rotate(cameratransform, (float)glm::radians(other_x_angle), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform = glm::rotate(cameratransform, (float)glm::radians(other_y_angle + 180.0), glm::vec3(0.0, 1.0, 0.0));
 		//cameratransform = glm::rotate(cameratransform, (float)glm::radians(180.0), glm::vec3(0.0, 1.0, 0.0));
-		cameratransform = glm::translate(cameratransform, glm::vec3(-camera_x, -camera_y, -camera_z));
+		cameratransform = glm::translate(cameratransform, glm::vec3(-otherCamera_x, -otherCamera_y, -otherCamera_z));
 		unsigned int cameraLocation = glGetUniformLocation(s_program, "cameraTransform");
 		glUniformMatrix4fv(cameraLocation, 1, GL_FALSE, glm::value_ptr(cameratransform));
 
@@ -742,7 +753,7 @@ GLvoid drawScene()
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(perspect));
 
 		int cameraPosLocation = glGetUniformLocation(s_program, "cameraPos");
-		glUniform3fv(cameraPosLocation, 1, glm::value_ptr(cameraPos));
+		glUniform3fv(cameraPosLocation, 1, glm::value_ptr(otherCameraPos));
 		int lightPosLocation = glGetUniformLocation(s_program, "lightPos");
 		glUniform3f(lightPosLocation, x_1, y_1, z_1);
 		int lightColorLocation = glGetUniformLocation(s_program, "lightColor");
@@ -752,16 +763,6 @@ GLvoid drawScene()
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glActiveTexture(GL_TEXTURE0);
-
-		if (left_button == true && arrow_on == false)
-		{
-			line.Draw(s_program);
-		}
-
-		for (int i = 0; i < 10; i++)
-		{
-			circle[i].Draw(s_program);
-		}
 
 		for (int i = 0; i < 25; ++i) {
 			for (int j = 0; j < 10; ++j) {
@@ -816,7 +817,7 @@ GLvoid drawScene()
 		glUniformMatrix4fv(projectionLocation1, 1, GL_FALSE, glm::value_ptr(perspect1));
 
 		int cameraPosLocation1 = glGetUniformLocation(s_program, "cameraPos");
-		glUniform3fv(cameraPosLocation1, 1, glm::value_ptr(cameraPos));
+		glUniform3fv(cameraPosLocation1, 1, glm::value_ptr(otherCameraPos));
 		int lightPosLocation1 = glGetUniformLocation(s_program, "lightPos");
 		glUniform3f(lightPosLocation1, x_1, y_1, z_1);
 		int lightColorLocation1 = glGetUniformLocation(s_program, "lightColor");
@@ -843,7 +844,7 @@ GLvoid drawScene()
 		glUniformMatrix4fv(projectionLocation2, 1, GL_FALSE, glm::value_ptr(perspect2));
 
 		int cameraPosLocation2 = glGetUniformLocation(s_program, "cameraPos");
-		glUniform3fv(cameraPosLocation2, 1, glm::value_ptr(cameraPos));
+		glUniform3fv(cameraPosLocation2, 1, glm::value_ptr(otherCameraPos));
 		int lightPosLocation2 = glGetUniformLocation(s_program, "lightPos");
 		glUniform3f(lightPosLocation2, x_1, y_1, z_1);
 		int lightColorLocation2 = glGetUniformLocation(s_program, "lightColor");
@@ -870,7 +871,7 @@ GLvoid drawScene()
 		glUniformMatrix4fv(projectionLocation3, 1, GL_FALSE, glm::value_ptr(perspect3));
 
 		int cameraPosLocation3 = glGetUniformLocation(s_program, "cameraPos");
-		glUniform3fv(cameraPosLocation3, 1, glm::value_ptr(cameraPos));
+		glUniform3fv(cameraPosLocation3, 1, glm::value_ptr(otherCameraPos));
 		int lightPosLocation3 = glGetUniformLocation(s_program, "lightPos");
 		glUniform3f(lightPosLocation3, x_1, y_1, z_1);
 		int lightColorLocation3 = glGetUniformLocation(s_program, "lightColor");
@@ -925,7 +926,7 @@ GLvoid drawScene()
 		glUniformMatrix4fv(projectionLocation4, 1, GL_FALSE, glm::value_ptr(perspect4));
 
 		int cameraPosLocation4 = glGetUniformLocation(s_program, "cameraPos");
-		glUniform3fv(cameraPosLocation4, 1, glm::value_ptr(cameraPos));
+		glUniform3fv(cameraPosLocation4, 1, glm::value_ptr(otherCameraPos));
 		int lightPosLocation4 = glGetUniformLocation(s_program, "lightPos");
 		glUniform3f(lightPosLocation4, x_1, y_1, z_1);
 		int lightColorLocation4 = glGetUniformLocation(s_program, "lightColor");
@@ -952,7 +953,7 @@ GLvoid drawScene()
 		glUniformMatrix4fv(projectionLocation5, 1, GL_FALSE, glm::value_ptr(perspect5));
 
 		int cameraPosLocation5 = glGetUniformLocation(s_program, "cameraPos");
-		glUniform3fv(cameraPosLocation5, 1, glm::value_ptr(cameraPos));
+		glUniform3fv(cameraPosLocation5, 1, glm::value_ptr(otherCameraPos));
 		int lightPosLocation5 = glGetUniformLocation(s_program, "lightPos");
 		glUniform3f(lightPosLocation5, x_1, y_1, z_1);
 		int lightColorLocation5 = glGetUniformLocation(s_program, "lightColor");
@@ -979,7 +980,7 @@ GLvoid drawScene()
 		glUniformMatrix4fv(projectionLocation8, 1, GL_FALSE, glm::value_ptr(perspect8));
 
 		int cameraPosLocation8 = glGetUniformLocation(s_program, "cameraPos");
-		glUniform3fv(cameraPosLocation8, 1, glm::value_ptr(cameraPos));
+		glUniform3fv(cameraPosLocation8, 1, glm::value_ptr(otherCameraPos));
 		int lightPosLocation8 = glGetUniformLocation(s_program, "lightPos");
 		glUniform3f(lightPosLocation8, x_1, y_1, z_1);
 		int lightColorLocation8 = glGetUniformLocation(s_program, "lightColor");
@@ -1946,9 +1947,9 @@ void Timer(int value)
 		total_score = 0;
 		t = 0;
 		v = 0;
-		camera_x = 0.2;
-		camera_y = 0.2;
-		camera_z = 0.6;
+		camera_x = bow.objectmatrix.position.x + 0.2;
+		camera_y = bow.objectmatrix.position.y + 0.2;
+		camera_z = bow.objectmatrix.position.z + 0.6;
 		arrow_x = 0;
 		arrow_y = 0;
 		arrow_z = 0;
@@ -1956,7 +1957,7 @@ void Timer(int value)
 		score_on = false;
 		bezier = false;
 		pass = false;
-		arrow.objectmatrix.position = glm::vec3(0.0, 0.0, 0.0);
+		arrow.objectmatrix.position = bow.objectmatrix.position;
 		if (stage > 3)
 		{
 			stage = 0;
@@ -2022,14 +2023,10 @@ void Timer(int value)
 			v += 0.1;
 		}
 		arrow.objectmatrix.position.z = -v * 0.01 + 0.5;
-		arrow.objectmatrix.position.x = 0.07;
+		arrow.objectmatrix.position.x = initPacket.player1Pos.x;
 		arrow_angle_y = -x_angle * PI / 180.0;
 		arrow.modelmatrix.rotation.x = -atanf(arrow_angle_y) * (180.0 / PI);
 		bow.modelmatrix.rotation.x = -atanf(arrow_angle_y) * (180.0 / PI);
-
-		otherArrow.modelmatrix.rotation.x = arrow.modelmatrix.rotation.x;
-		otherArrow.objectmatrix.position.z = -v * 0.01 + 0.5;
-		otherBow.modelmatrix.rotation.x = bow.modelmatrix.rotation.x;
 	}
 	else if (left_button == false && arrow_on == false)
 	{
@@ -2092,7 +2089,7 @@ GLvoid Keyborad(unsigned char key, int x, int y)
 			wind_x = 0;
 			wind_y = 0;
 			wind_z = 0;
-			arrow.objectmatrix.position = glm::vec3(0.0, 0.0, 0.0);
+			arrow.objectmatrix.position = bow.objectmatrix.position;
 			arrow.modelmatrix.rotation.x = 0;
 			arrow.modelmatrix.rotation.y = 0;
 			arrow.modelmatrix.rotation.z = 0;
@@ -2125,16 +2122,16 @@ GLvoid Keyborad(unsigned char key, int x, int y)
 			v = 0;
 			y_angle = 0;
 			x_angle = 0;
-			camera_x = 0.2;
-			camera_y = 0.2;
-			camera_z = 0.6;
+			camera_x = bow.objectmatrix.position.x + 0.2;
+			camera_y = bow.objectmatrix.position.y + 0.2;
+			camera_z = bow.objectmatrix.position.z + 0.6;
 			arrow_x = 0.07;
 			arrow_y = 0;
 			arrow_z = 0.5;
 			arrow_on = false;
 			score_on = false;
 			bezier = false;
-			arrow.objectmatrix.position = glm::vec3(0.07, 0.0, 0.5);
+			arrow.objectmatrix.position = initPacket.player1Pos;
 
 			arrow.modelmatrix.rotation.x = 0;
 			arrow.modelmatrix.rotation.y = 0;
@@ -2155,16 +2152,19 @@ GLvoid Keyborad(unsigned char key, int x, int y)
 	case 'n':
 		y_angle = 0;
 		x_angle = 0;
-		camera_x = 0.2;
-		camera_y = 0.2;
-		camera_z = 0.6;
+		camera_x = bow.objectmatrix.position.x + 0.2;
+		camera_y = bow.objectmatrix.position.y + 0.2;
+		camera_z = bow.objectmatrix.position.z + 0.6;
 		break;
 	case 't':
 	case 'T':
-		main_loading = false;
-		sock = socket(AF_INET, SOCK_STREAM, 0);
-		if (sock == INVALID_SOCKET) err_quit("socket()");
-		connectState=CreateSocekt();
+		if(main_loading)
+		{
+			main_loading = false;
+			sock = socket(AF_INET, SOCK_STREAM, 0);
+			if (sock == INVALID_SOCKET) err_quit("socket()");
+			connectState=CreateSocekt();
+		}
 		break;
 	case 27: // Escape
 		// 소켓 삭제 ------------
@@ -2246,7 +2246,6 @@ GLvoid mouseWheel(int button, int dir, int x, int y)
 
 bool CreateSocekt()
 {
-	InitPacket InitPacket;
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
 	inet_pton(AF_INET, SERVERIP, &serveraddr.sin_addr);
@@ -2265,7 +2264,7 @@ bool CreateSocekt()
 		err_display("recv() wh");
 		return true;
 	}
-	retval = recv(sock, (char*)&InitPacket, sizeof(InitPacket), MSG_WAITALL);
+	retval = recv(sock, (char*)&initPacket, sizeof(InitPacket), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) {
 		err_display("recv() InitPacket");
 		return true;
@@ -2273,7 +2272,7 @@ bool CreateSocekt()
 	
 	for (int i = 0; i < 5; ++i) {
 		for (int j = 0; j < 5; ++j) {
-			circleCenter[5 * i + j] = InitPacket.circleCenter[5 * i + j];
+			circleCenter[5 * i + j] = initPacket.circleCenter[5 * i + j];
 			printf("%f, %f %f\n", circleCenter[5 * i + j].x, circleCenter[5 * i + j].y, circleCenter[5 * i + j].z);
 		}
 	}
@@ -2285,8 +2284,21 @@ bool CreateSocekt()
 			circleTest[i][j].modelmatrix.scale = glm::vec3(j * 0.1 + 0.1, j * 0.1 + 0.1, 1.0);
 		}
 	}
+	
+	arrow.objectmatrix.position= initPacket.player1Pos;
+	otherArrow.objectmatrix.position= initPacket.player2Pos;
+	bow.objectmatrix.position = glm::vec3(arrow.objectmatrix.position.x - 0.07, arrow.objectmatrix.position.y, 0.0);
+	otherBow.objectmatrix.position = glm::vec3(otherArrow.objectmatrix.position.x - 0.07, otherArrow.objectmatrix.position.y, 0.0);
+
+	camera_x = bow.objectmatrix.position.x + 0.2;
+	camera_y = bow.objectmatrix.position.y + 0.2;
+	camera_z = bow.objectmatrix.position.z + 0.6;
+
+	otherCamera_x = otherBow.objectmatrix.position.x + 0.2;
+	otherCamera_y = otherBow.objectmatrix.position.y + 0.2;
+	otherCamera_z = otherBow.objectmatrix.position.z + 0.6;
+
+	line.objectmatrix.position = bow.objectmatrix.position;
 
 	return true;
-
-
 }
