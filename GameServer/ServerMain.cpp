@@ -4,6 +4,7 @@
 #include <time.h>
 #include <math.h>
 #include <algorithm>
+#include <time.h>
 
 #define SERVERPORT 9000
 #define BUFSIZE    512
@@ -13,6 +14,8 @@ const int CIRCLENUMHEIGHT = 5;
 const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT;
 
 int stage = 0; // 스테이지 넘버
+
+CRITICAL_SECTION cs;
 
 enum  CIRCLE_STATE {
 	CIRCLE_OFF = 0,
@@ -51,7 +54,7 @@ struct SocketWithIndex {
 short g_circleState[CIRCLENUM];
 
 InitPacket InitializePacket();
-void windTimer(short winddir, float windspeed);
+DWORD WINAPI windTimer(short winddir, float windspeed);
 void CircleMgr(const glm::vec3& pos, int index);
 
 bool ArrowCheck(const glm::vec3& pos, int circleIndex, int index);
@@ -69,11 +72,17 @@ int client_index = 0;
 
 int clientScore[2];
 
-HANDLE hReadEvent[2];
-HANDLE hWriteEvent[2];
+HANDLE hRecvEvent[2];
+HANDLE hSendEvent[2];
 
 InPacket g_InPacket[2];
 Packet g_Packet[2];
+
+time_t windTime;
+HANDLE hWindThread;
+
+short winddir;
+float windspeed;
 
 DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 	SocketWithIndex* swi = (SocketWithIndex*)arg;
@@ -102,8 +111,9 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 	}
 
 	while (1) {
-		// 클라이언트로부터 데이터 수신
-		// 이벤트는 추후에 추가
+		retval = WaitForSingleObject(hRecvEvent[index], INFINITY);
+		if (retval != WAIT_OBJECT_0) break;
+
 		retval = recv(client_sock, (char*)&g_InPacket[index], sizeof(InPacket), MSG_WAITALL);
 		if (retval == SOCKET_ERROR) {
 			err_display("recv()");
@@ -121,6 +131,15 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 		g_Packet[opositeIndex].x_angle = g_InPacket[index].x_angle;
 		g_Packet[opositeIndex].y_angle=	g_InPacket[index].y_angle;
 
+		if (index == 0) { // 0번 클라면 1번 클라 recv이벤트
+			SetEvent(hRecvEvent[opositeIndex]);
+			ResetEvent(hRecvEvent[index]);
+		}
+		else { // 1번 클라면 0번 클라 send이벤트
+			SetEvent(hSendEvent[opositeIndex]);
+			ResetEvent(hRecvEvent[index]);
+		}
+
 		// 클라이언트로 데이터 송신
 		// 이벤트는 추후에 추가
 		retval = send(client_sock, (char*)&g_Packet[index], sizeof(Packet), 0);
@@ -128,41 +147,45 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 			err_display("send()");
 			break;
 		}
+		
+		// send 추가해야함
 	}
 
 	closesocket(client_sock);
 	return 0;
 }
 
-
-
-void windTimer(short winddir, float windspeed) {
-	static int wind_timer = 1000;
-	if (wind_timer <= 0)
-	{
-		if (stage == 0)
+DWORD WINAPI windTimer(LPVOID arg) {
+	while (1) {
+		time_t currentTime = time(NULL);
+		if (currentTime - windTime >= 10)
 		{
-			windspeed = 0.0;
+			EnterCriticalSection(&cs);
+			if (stage == 0)
+			{
+				windspeed = 0.0;
+			}
+			else if (stage == 1)
+			{
+				windspeed = ((float)(rand() % 21) / 10);
+			}
+			else if (stage == 2)
+			{
+				windspeed = ((float)(rand() % 41) / 10);
+			}
+			else if (stage == 3)
+			{
+				windspeed = ((float)(rand() % 91) / 10);
+			}
+			winddir = rand() % 9;
+			windTime = currentTime;
+			g_Packet[0].wind_dir = winddir;
+			g_Packet[0].wind_speed = windspeed;
+			g_Packet[1].wind_dir = winddir;
+			g_Packet[1].wind_speed = windspeed;
+			std::cout << winddir << std::endl;
+			LeaveCriticalSection(&cs);
 		}
-		else if (stage == 1)
-		{
-			windspeed = ((float)(rand() % 21) / 10);
-		}
-		else if (stage == 2)
-		{
-			windspeed = ((float)(rand() % 41) / 10);
-		}
-		else if (stage == 3)
-		{
-			windspeed = ((float)(rand() % 91) / 10);
-		}
-		wind_timer = 1000;
-		winddir = rand() % 9;
-		std::cout << winddir << std::endl;
-	}
-	else
-	{
-		wind_timer -= 1;
 	}
 }
 
@@ -170,6 +193,8 @@ void windTimer(short winddir, float windspeed) {
 int main(int argc, char* argv[])
 {
 	int retval;
+
+	InitializeCriticalSection(&cs);
 
 	// 윈속 초기화
 	WSADATA wsa;
@@ -224,6 +249,11 @@ int main(int argc, char* argv[])
 		swi[1].sock = client_sock[1];
 		swi[1].index = 0;
 
+		hRecvEvent[0] = CreateEvent(NULL, FALSE, FALSE, NULL);
+		hSendEvent[0] = CreateEvent(NULL, FALSE, FALSE, NULL);
+		hRecvEvent[1] = CreateEvent(NULL, FALSE, FALSE, NULL);
+		hSendEvent[1] = CreateEvent(NULL, FALSE, FALSE, NULL);
+
 		// 통신을 위한 ClinetMgr 시작
 		hThread = CreateThread(NULL, 0, ClientMgr, &swi[0], 0, NULL);
 		if (hThread == NULL) closesocket(client_sock[0]);
@@ -231,6 +261,12 @@ int main(int argc, char* argv[])
 		hThread = CreateThread(NULL, 0, ClientMgr, &swi[1], 0, NULL);
 		if (hThread == NULL) closesocket(client_sock[1]);
 		else CloseHandle(hThread);
+
+		windTime = time(NULL);
+		hWindThread = CreateThread(NULL, 0, windTimer, NULL, 0, NULL);
+		if (hWindThread != NULL) CloseHandle(hWindThread);
+
+		SetEvent(hRecvEvent[0]);
 
 		// 접속한 클라이언트 정보 출력
 		//char addr[INET_ADDRSTRLEN];
