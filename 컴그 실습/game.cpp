@@ -74,7 +74,9 @@ CubeMap background;
 Arrow arrow;
 Circle circle[10];
 
-Circle circleTest[25][10];
+Circle **circleTest;
+int circlewidth;
+int circleheight;
 
 Line line;
 Board board;
@@ -144,14 +146,6 @@ float wind_speed = 0.0;
 int wind_dir = 0;
 int wind_timer = 1000;
 
-bool bezier = false;
-float bezier_x1 = 0;
-float bezier_x2 = 0;
-float bezier_y1 = 0;
-float bezier_y2 = 0;
-float bezier_z1 = 0;
-float bezier_z2 = 0;
-
 int camera_mode = 0;
 int score = 0;
 short total_score = 0;
@@ -174,8 +168,6 @@ float wind_angle_z = 0;
 bool main_loading = true;
 
 GLenum Mode = GL_FILL;
-
-glm::vec3 circleCenter[25];
 
 bool connectState = false;
 
@@ -202,6 +194,7 @@ struct InitPacket {
 };
 
 InitPacket initPacket;
+InPacket inPacket;
 
 void DataComm() { 
 	if (connectState) {
@@ -217,8 +210,6 @@ void DataComm() {
 			return;
 		}
 
-
-		InPacket inPacket;
 		retval = recv(sock, (char*)&inPacket, sizeof(inPacket), MSG_WAITALL);
 		if (retval == SOCKET_ERROR) {
 			err_display("recv()");
@@ -230,6 +221,14 @@ void DataComm() {
 		otherArrow.modelmatrix.rotation = inPacket.arrowRotation;
 		wind_dir = inPacket.wind_dir;
 		wind_speed = inPacket.wind_speed;
+
+		for (int i = 0; i < circleheight * circlewidth; ++i)
+		{
+			if (inPacket.circleState[i] == 2)
+			{
+				particle_on = true;
+			}
+		}
 	}
 }
 
@@ -470,14 +469,15 @@ GLvoid drawScene()
 			line.Draw(s_program);
 		}
 
-		for (int i = 0; i < 10; i++)
-		{
-			circle[i].Draw(s_program);
-		}
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	circle[i].Draw(s_program);
+		//}
 
-		for (int i = 0; i < 25; ++i) {
+		for (int i = 0; i < circleheight*circlewidth; ++i) {
 			for (int j = 0; j < 10; ++j) {
-				circleTest[i][j].Draw(s_program);
+				//if(inPacket.circleState[i]) 
+					circleTest[i][j].Draw(s_program);
 			}
 		}
 
@@ -764,9 +764,10 @@ GLvoid drawScene()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glActiveTexture(GL_TEXTURE0);
 
-		for (int i = 0; i < 25; ++i) {
+		for (int i = 0; i < circleheight * circlewidth; ++i) {
 			for (int j = 0; j < 10; ++j) {
-				circleTest[i][j].Draw(s_program);
+				//if (inPacket.circleState[i]) 
+					circleTest[i][j].Draw(s_program);
 			}
 		}
 
@@ -1073,27 +1074,6 @@ void InitBuffer()
 	circle[7].Update(0.4, 0.4, 0.4);
 	circle[8].Update(0.6, 0.6, 0.6);
 	circle[9].Update(0.8, 0.8, 0.8);
-
-	for (int i = 0; i < 25; ++i) {
-		for (int j = 0; j < 10; j++)
-		{
-			circleTest[i][j].Initialize();
-		}
-	}
-	//°ú³á À§Ä¡
-	for (int i = 0; i < 25; ++i) {
-
-			circleTest[i][0].Update(1.0, 1.0, 0.7);
-			circleTest[i][1].Update(1.0, 1.0, 0.0);
-			circleTest[i][2].Update(1.0, 0.2, 0.2);
-			circleTest[i][3].Update(1.0, 0.0, 0.0);
-			circleTest[i][4].Update(0.2, 0.2, 1.0);
-			circleTest[i][5].Update(0.0, 0.0, 1.0);
-			circleTest[i][6].Update(0.2, 0.2, 0.2);
-			circleTest[i][7].Update(0.4, 0.4, 0.4);
-			circleTest[i][8].Update(0.6, 0.6, 0.6);
-			circleTest[i][9].Update(0.8, 0.8, 0.8);
-	}
 
 	for (int i = 0; i < SNOW_SIZE; i++)
 	{
@@ -1590,281 +1570,78 @@ void Timer(int value)
 
 	if (arrow_on)
 	{
-		if (bezier == false)
+		if (arrow_z < 90.0 && arrow_y > -10.0)
 		{
-			if (replay)
+			switch (wind_dir) {
+			case 0:
+				wind_x += 0;
+				wind_y += 0;
+				wind_z += 0;
+				break;
+			case 1:
+				wind_x += 0;
+				wind_y += (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_z += 0;
+				break;
+			case 2:
+				wind_x -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_y += (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_z += 0;
+				break;
+			case 3:
+				wind_x -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_y += 0;
+				wind_z += 0;
+				break;
+			case 4:
+				wind_x -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_y -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_z += 0;
+				break;
+			case 5:
+				wind_x -= 0;
+				wind_y -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_z += 0;
+				break;
+			case 6:
+				wind_x += (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_y -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_z += 0;
+				break;
+			case 7:
+				wind_x += (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_y += 0;
+				wind_z += 0;
+				break;
+			case 8:
+				wind_x += (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_y += (0.0009 * 1.229 * pow(wind_speed, 2.0));
+				wind_z += 0;
+				break;
+			}
+			t += 0.01;
+			arrow_z = v * cos(arrow_angle_y) * t;
+			arrow_y = v * sin(arrow_angle_y) * t - (0.5 * 9.8 * t * t);
+			if (arrow_angle_x != 0)
 			{
-				if (arrow_z< 90.0 && arrow_y > -10.0)
-				{
-					switch (wind_dir) {
-					case '0':
-						wind_x += 0;
-						wind_y += 0;
-						wind_z += 0;
-						break;
-					case '1':
-						wind_x += 0;
-						wind_y += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					case '2':
-						wind_x -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					case '3':
-						wind_x -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y += 0;
-						wind_z += 0;
-						break;
-					case '4':
-						wind_x -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					case '5':
-						wind_x -= 0;
-						wind_y -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					case '6':
-						wind_x += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					case '7':
-						wind_x += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y += 0;
-						wind_z += 0;
-						break;
-					case '8':
-						wind_x += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					}
-					t += 0.01;
-					arrow_z = v * cos(arrow_angle_y) * t;
-					arrow_y = v * sin(arrow_angle_y) * t - (0.5 * 9.8 * t * t);
-					if (arrow_angle_x != 0)
-					{
-						arrow_x = float(arrow_z / tan(arrow_angle_x));
-					}
-					else
-					{
-						arrow_x = 0;
-					}
-					arrow.objectmatrix.position = glm::vec3(arrow_x + wind_x, arrow_y + wind_y, arrow_z + wind_z);
-					arrow.modelmatrix.rotation.x = -atanf((arrow_y - pre_arrow_y) / (arrow_z - pre_arrow_z)) * (180.0 / PI);
-					arrow.modelmatrix.rotation.y = -atanf((arrow_x - pre_arrow_x) / (arrow_z - pre_arrow_z)) * (180.0 / PI);
-					pre_arrow_x = arrow_x;
-					pre_arrow_y = arrow_y;
-					pre_arrow_z = arrow_z;
-
-					if (camera_mode == 0)
-					{
-						camera_y = arrow_y + wind_y;
-						camera_z = arrow_z + wind_z;
-						camera_x = arrow_x + wind_x;
-					}
-					else if (camera_mode == 1)
-					{
-						camera_z = 88;
-						camera_y = 0;
-						camera_x = 0;
-						y_angle = 180;
-					}
-				}
-				else
-				{
-					score = 10;
-					for (int i = 0; i < 10; i++)
-					{
-						if (sqrt(pow(circle[i].modelmatrix.position.x - arrow_x + wind_x, 2.0) + pow(circle[i].modelmatrix.position.y - arrow_y + wind_y, 2.0)) <= (i * 0.1 + 0.1))
-						{
-							particle_on = true;
-
-							mciOpen.lpstrElementName = "jump.wav";
-							mciOpen.lpstrDeviceType = "mpegvideo";
-							mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-								(DWORD)(LPVOID)&mciOpen);
-							dwID = mciOpen.wDeviceID;
-							mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&m_mciPlayParms);
-							if (score > i)
-							{
-								score = i;
-							}
-						}
-					}
-					score_on = true;
-					replay = false;
-				}
+				arrow_x = float(arrow_z / tan(arrow_angle_x));
 			}
 			else
 			{
-				if (arrow_z < 90.0 && arrow_y > -10.0)
-				{
-					switch (wind_dir) {
-					case 0:
-						wind_x += 0;
-						wind_y += 0;
-						wind_z += 0;
-						break;
-					case 1:
-						wind_x += 0;
-						wind_y += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					case 2:
-						wind_x -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					case 3:
-						wind_x -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y += 0;
-						wind_z += 0;
-						break;
-					case 4:
-						wind_x -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					case 5:
-						wind_x -= 0;
-						wind_y -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					case 6:
-						wind_x += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y -= (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					case 7:
-						wind_x += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y += 0;
-						wind_z += 0;
-						break;
-					case 8:
-						wind_x += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_y += (0.0009 * 1.229 * pow(wind_speed, 2.0));
-						wind_z += 0;
-						break;
-					}
-					t += 0.01;
-					arrow_z = v * cos(arrow_angle_y) * t;
-					arrow_y = v * sin(arrow_angle_y) * t - (0.5 * 9.8 * t * t);
-					if (arrow_angle_x != 0)
-					{
-						arrow_x = float(arrow_z / tan(arrow_angle_x));
-					}
-					else
-					{
-						arrow_x = 0;
-					}
-					arrow.objectmatrix.position = glm::vec3(arrow_x + wind_x, arrow_y + wind_y, arrow_z + wind_z);
-					arrow.modelmatrix.rotation.x = -atanf((arrow_y - pre_arrow_y) / (arrow_z - pre_arrow_z)) * (180.0 / PI);
-					arrow.modelmatrix.rotation.y = atanf((arrow_x - pre_arrow_x) / (arrow_z - pre_arrow_z)) * (180.0 / PI);
-					pre_arrow_x = arrow_x;
-					pre_arrow_y = arrow_y;
-					pre_arrow_z = arrow_z;
-
-					if (camera_mode == 0)
-					{
-						camera_y = arrow_y + wind_y;
-						camera_z = arrow_z + wind_z;
-						camera_x = arrow_x + wind_x;
-					}
-					else if (camera_mode == 1)
-					{
-						camera_z = 88;
-						camera_y = 0;
-						camera_x = 0;
-						y_angle = 180;
-					}
-				}
-				else
-				{
-					if (score_on == false)
-					{
-						score = 10;
-						for (int i = 0; i < 10; i++)
-						{
-							if (sqrt(pow(circle[i].modelmatrix.position.x - arrow_x + wind_x, 2.0) + pow(circle[i].modelmatrix.position.y - arrow_y + wind_y, 2.0)) <= (i * 0.1 + 0.1))
-							{
-								particle_on = true;
-
-								mciOpen.lpstrElementName = "jump.wav";
-								mciOpen.lpstrDeviceType = "mpegvideo";
-								mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-									(DWORD)(LPVOID)&mciOpen);
-								dwID = mciOpen.wDeviceID;
-								mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&m_mciPlayParms);
-								if (score > i)
-								{
-									score = i;
-								}
-							}
-						}
-						total_score += (10 - score);
-						score_on = true;
-					}
-				}
+				arrow_x = 0;
 			}
-		}
-		else if (bezier)
-		{
-			t += 0.002;
-			if (t <= 1.0)
-			{
-				arrow_x = 0.0 * (1 - t) * (1 - t) * (1 - t) + 3.0 * bezier_x1 * t * (1 - t) * (1 - t) + 3.0 * -bezier_x2 * t * t * (1 - t) + 0.0 * t * t * t;
-				arrow_y = 0.0 * (1 - t) * (1 - t) * (1 - t) + 3.0 * -bezier_y1 * t * (1 - t) * (1 - t) + 3.0 * bezier_y2 * t * t * (1 - t) + 0.0 * t * t * t;
-				arrow_z = 0.0 * (1 - t) * (1 - t) * (1 - t) + 3.0 * bezier_z1 * t * (1 - t) * (1 - t) + 3.0 * bezier_z2 * t * t * (1 - t) + 90.0 * t * t * t;
-				arrow.objectmatrix.position = glm::vec3(arrow_x, arrow_y, arrow_z);
-				arrow.modelmatrix.rotation.x = -atanf((arrow_y - pre_arrow_y) / (arrow_z - pre_arrow_z)) * (180.0 / PI);
-				arrow.modelmatrix.rotation.y = atanf((arrow_x - pre_arrow_x) / (arrow_z - pre_arrow_z)) * (180.0 / PI);
-				pre_arrow_x = arrow_x;
-				pre_arrow_y = arrow_y;
-				pre_arrow_z = arrow_z;
-			}
-			else
-			{
-				if (score_on == false)
-				{
-					particle_on = true;
-
-					mciOpen.lpstrElementName = "jump.wav";
-					mciOpen.lpstrDeviceType = "mpegvideo";
-					mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-						(DWORD)(LPVOID)&mciOpen);
-					dwID = mciOpen.wDeviceID;
-					mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&m_mciPlayParms);
-
-					total_score += 10;
-					std::cout << total_score << std::endl;
-					score_on = true;
-				}
-				if (replay)
-				{
-					particle_on = true;
-
-					mciOpen.lpstrElementName = "jump.wav";
-					mciOpen.lpstrDeviceType = "mpegvideo";
-					mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-						(DWORD)(LPVOID)&mciOpen);
-					dwID = mciOpen.wDeviceID;
-					mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&m_mciPlayParms);
-
-					std::cout << total_score << std::endl;
-					replay = false;
-				}
-			}
+			arrow.objectmatrix.position = glm::vec3(arrow_x + wind_x, arrow_y + wind_y, arrow_z + wind_z);
+			arrow.modelmatrix.rotation.x = -atanf((arrow_y - pre_arrow_y) / (arrow_z - pre_arrow_z)) * (180.0 / PI);
+			arrow.modelmatrix.rotation.y = atanf((arrow_x - pre_arrow_x) / (arrow_z - pre_arrow_z)) * (180.0 / PI);
+			pre_arrow_x = arrow_x;
+			pre_arrow_y = arrow_y;
+			pre_arrow_z = arrow_z;
 
 			if (camera_mode == 0)
 			{
-				camera_y = arrow.objectmatrix.position.y;
-				camera_z = arrow.objectmatrix.position.z;
-				camera_x = arrow.objectmatrix.position.x;
+				camera_y = arrow_y + wind_y;
+				camera_z = arrow_z + wind_z;
+				camera_x = arrow_x + wind_x;
 			}
 			else if (camera_mode == 1)
 			{
@@ -1874,37 +1651,32 @@ void Timer(int value)
 				y_angle = 180;
 			}
 		}
-	}
-	else
-	{
-		// wind_timer ¿©±âºÎÅÍ
-		if (wind_timer <= 0)
-		{
-			if (stage == 0)
-			{
-				wind_speed = 0.0;
-			}
-			else if (stage == 1)
-			{
-				wind_speed = ((float)(rand() % 21) / 10);
-			}
-			else if (stage == 2)
-			{
-				wind_speed = ((float)(rand() % 41) / 10);
-			}
-			else if (stage == 3)
-			{
-				wind_speed = ((float)(rand() % 91) / 10);
-			}
-			wind_timer = 1000;
-			wind_dir = rand() % 9;
-			std::cout << wind_dir << std::endl;
-		}
-		else
-		{
-			wind_timer -= 1;
-		}
-		// wind_timer ¿©±â±îÁö ²ø¾î¿È
+		//else
+		//{
+		//	if (score_on == false)
+		//	{
+		//		score = 10;
+		//		for (int i = 0; i < 10; i++)
+		//		{
+		//			if (sqrt(pow(circle[i].modelmatrix.position.x - arrow_x + wind_x, 2.0) + pow(circle[i].modelmatrix.position.y - arrow_y + wind_y, 2.0)) <= (i * 0.1 + 0.1))
+		//			{
+		//				particle_on = true;
+		//				mciOpen.lpstrElementName = "jump.wav";
+		//				mciOpen.lpstrDeviceType = "mpegvideo";
+		//				mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
+		//					(DWORD)(LPVOID)&mciOpen);
+		//				dwID = mciOpen.wDeviceID;
+		//				mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&m_mciPlayParms);
+		//				if (score > i)
+		//				{
+		//					score = i;
+		//				}
+		//			}
+		//		}
+		//		total_score += (10 - score);
+		//		score_on = true;
+		//	}
+		//}
 	}
 
 	if (particle_on)
@@ -1940,6 +1712,7 @@ void Timer(int value)
 			}
 		}
 	}
+	
 
 	if (total_score >= 30 && pass)
 	{
@@ -1955,7 +1728,6 @@ void Timer(int value)
 		arrow_z = 0;
 		arrow_on = false;
 		score_on = false;
-		bezier = false;
 		pass = false;
 		arrow.objectmatrix.position = bow.objectmatrix.position;
 		if (stage > 3)
@@ -2130,7 +1902,6 @@ GLvoid Keyborad(unsigned char key, int x, int y)
 			arrow_z = 0.5;
 			arrow_on = false;
 			score_on = false;
-			bezier = false;
 			arrow.objectmatrix.position = initPacket.player1Pos;
 
 			arrow.modelmatrix.rotation.x = 0;
@@ -2264,24 +2035,60 @@ bool CreateSocekt()
 		err_display("recv() wh");
 		return true;
 	}
-	retval = recv(sock, (char*)&initPacket, sizeof(InitPacket), MSG_WAITALL);
+	
+	circlewidth = HIBYTE(wh);
+	circleheight = LOBYTE(wh);
+	retval = recv(sock, (char*)&initPacket, sizeof(initPacket), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) {
 		err_display("recv() InitPacket");
 		return true;
 	}
 	
-	for (int i = 0; i < 5; ++i) {
-		for (int j = 0; j < 5; ++j) {
-			circleCenter[5 * i + j] = initPacket.circleCenter[5 * i + j];
-			printf("%f, %f %f\n", circleCenter[5 * i + j].x, circleCenter[5 * i + j].y, circleCenter[5 * i + j].z);
-		}
+	
+	//for (int i = 0; i < circleheight; ++i) {
+	//	for (int j = 0; j < circlewidth; ++j) {
+	//		initPacket.circleCenter[5 * i + j] = initPacket.circleCenter[5 * i + j];
+	//		printf("%f, %f %f\n", initPacket.circleCenter[5 * i + j].x, initPacket.circleCenter[5 * i + j].y, initPacket.circleCenter[5 * i + j].z);
+	//	}
+	//}
+
+	circleTest = new Circle *[circlewidth * circleheight];
+	for (int i = 0; i < circleheight * circlewidth; ++i)
+	{
+		circleTest[i] = new Circle[10];
 	}
 
-	for (int i = 0; i < 25; ++i) {
+	for (int i = 0; i < circleheight * circlewidth; ++i) {
+		for (int j = 0; j < 10; j++)
+		{
+			circleTest[i][j].Initialize();
+			circleTest[i][j].objectmatrix.position = glm::vec3(0, 0, 0);
+			circleTest[i][j].objectmatrix.rotation = glm::vec3(0, 0, 0);
+			circleTest[i][j].objectmatrix.scale = glm::vec3(1, 1, 1);
+			circleTest[i][j].modelmatrix.position = glm::vec3(0, 0, 0);
+			circleTest[i][j].modelmatrix.rotation = glm::vec3(0, 0, 0);
+			circleTest[i][j].modelmatrix.scale = glm::vec3(1, 1, 1);
+		}
+	}
+	for (int i = 0; i < circleheight * circlewidth; ++i) {
+
+		circleTest[i][0].Update(1.0, 1.0, 0.7);
+		circleTest[i][1].Update(1.0, 1.0, 0.0);
+		circleTest[i][2].Update(1.0, 0.2, 0.2);
+		circleTest[i][3].Update(1.0, 0.0, 0.0);
+		circleTest[i][4].Update(0.2, 0.2, 1.0);
+		circleTest[i][5].Update(0.0, 0.0, 1.0);
+		circleTest[i][6].Update(0.2, 0.2, 0.2);
+		circleTest[i][7].Update(0.4, 0.4, 0.4);
+		circleTest[i][8].Update(0.6, 0.6, 0.6);
+		circleTest[i][9].Update(0.8, 0.8, 0.8);
+	}
+
+	for (int i = 0; i < circlewidth* circleheight; ++i) {
 		for (int j = 0; j < 10; ++j) {
-			circleTest[i][j].modelmatrix.position = circleCenter[i];
-			circleTest[i][j].modelmatrix.position.z += 0.001 * j;
-			circleTest[i][j].modelmatrix.scale = glm::vec3(j * 0.1 + 0.1, j * 0.1 + 0.1, 1.0);
+			circleTest[i][j].objectmatrix.position = initPacket.circleCenter[i];
+			circleTest[i][j].objectmatrix.position.z += 0.001 * j;
+			circleTest[i][j].objectmatrix.scale = glm::vec3(j * 0.1 + 0.1, j * 0.1 + 0.1, 1.0);
 		}
 	}
 	
