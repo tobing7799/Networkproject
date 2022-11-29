@@ -33,7 +33,7 @@ struct Packet {
 	float x_angle, y_angle; // 플레이어의 시야 각도 값
 	glm::vec3 arrowPosition; // 화살의 좌표 값;
 	glm::vec3 arrowRotation; // 화살의 회전 값;
-	short total_score; // 플레이어의 현재 점수
+	short total_score; // 플레이어의 현재 점수 Byte,Byte
 	short wind_dir; // 바람의 방향
 	float wind_speed; // 바람의 세기
 	short circleState[CIRCLENUM]; // 과녁의 상태
@@ -72,8 +72,10 @@ int client_index = 0;
 
 int clientScore[2];
 
+
 HANDLE hRecvEvent[2];
 HANDLE hSendEvent[2];
+
 
 InPacket g_InPacket[2];
 Packet g_Packet[2];
@@ -104,15 +106,25 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 		err_display("send()");
 		return 1;
 	}
+	if (index == 0) {
+		g_InitPacket.player1Pos = glm::vec3(1.f, 0, 0);
+		g_InitPacket.player2Pos = glm::vec3(-1.f, 0, 0);
+	}
+	else {
+		g_InitPacket.player2Pos = glm::vec3(1.f, 0, 0);
+		g_InitPacket.player1Pos = glm::vec3(-1.f, 0, 0);
+	}
 	retval = send(client_sock, (char*)&g_InitPacket, sizeof(InitPacket), 0);
 	if (retval == SOCKET_ERROR) {
 		err_display("send()");
 		return 1;
 	}
+	printf("%d 클라 초기값 전송\n", index);
 
 	while (1) {
-		retval = WaitForSingleObject(hRecvEvent[index], INFINITY);
-		if (retval != WAIT_OBJECT_0) break;
+		printf("반복문 시작");
+		/*retval = WaitForSingleObject(hRecvEvent[index], INFINITY);
+		if (retval != WAIT_OBJECT_0) break;*/
 
 		retval = recv(client_sock, (char*)&g_InPacket[index], sizeof(InPacket), MSG_WAITALL);
 		if (retval == SOCKET_ERROR) {
@@ -131,7 +143,7 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 		g_Packet[opositeIndex].x_angle = g_InPacket[index].x_angle;
 		g_Packet[opositeIndex].y_angle=	g_InPacket[index].y_angle;
 
-		if (index == 0) { // 0번 클라면 1번 클라 recv이벤트
+		/*if (index == 0) { // 0번 클라면 1번 클라 recv이벤트
 			SetEvent(hRecvEvent[opositeIndex]);
 			ResetEvent(hRecvEvent[index]);
 		}
@@ -139,7 +151,8 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 			SetEvent(hSendEvent[opositeIndex]);
 			ResetEvent(hRecvEvent[index]);
 		}
-
+		retval = WaitForSingleObject(hSendEvent[index], INFINITY);
+		if (retval != WAIT_OBJECT_0) break;*/
 		// 클라이언트로 데이터 송신
 		// 이벤트는 추후에 추가
 		retval = send(client_sock, (char*)&g_Packet[index], sizeof(Packet), 0);
@@ -149,6 +162,14 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 		}
 		
 		// send 추가해야함
+		/*if (index == 0) { // 0번 클라면 1번 클라 recv이벤트
+			SetEvent(hSendEvent[opositeIndex]);
+			ResetEvent(hSendEvent[index]);
+		}
+		else { // 1번 클라면 0번 클라 send이벤트
+			SetEvent(hRecvEvent[opositeIndex]);
+			ResetEvent(hSendEvent[index]);
+		}*/
 	}
 
 	closesocket(client_sock);
@@ -247,12 +268,14 @@ int main(int argc, char* argv[])
 			break;
 		}
 		swi[1].sock = client_sock[1];
-		swi[1].index = 0;
+		swi[1].index = 1;
 
-		hRecvEvent[0] = CreateEvent(NULL, FALSE, FALSE, NULL);
-		hSendEvent[0] = CreateEvent(NULL, FALSE, FALSE, NULL);
-		hRecvEvent[1] = CreateEvent(NULL, FALSE, FALSE, NULL);
-		hSendEvent[1] = CreateEvent(NULL, FALSE, FALSE, NULL);
+		//hRecvEvent[0] = CreateEvent(NULL, FALSE, FALSE, NULL);
+		//hSendEvent[0] = CreateEvent(NULL, FALSE, FALSE, NULL);
+		//hRecvEvent[1] = CreateEvent(NULL, FALSE, FALSE, NULL);
+		//hSendEvent[1] = CreateEvent(NULL, FALSE, FALSE, NULL);
+		
+		//SetEvent(hRecvEvent[0]);
 
 		// 통신을 위한 ClinetMgr 시작
 		hThread = CreateThread(NULL, 0, ClientMgr, &swi[0], 0, NULL);
@@ -265,8 +288,6 @@ int main(int argc, char* argv[])
 		windTime = time(NULL);
 		hWindThread = CreateThread(NULL, 0, windTimer, NULL, 0, NULL);
 		if (hWindThread != NULL) CloseHandle(hWindThread);
-
-		SetEvent(hRecvEvent[0]);
 
 		// 접속한 클라이언트 정보 출력
 		//char addr[INET_ADDRSTRLEN];
