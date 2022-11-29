@@ -170,6 +170,7 @@ bool main_loading = true;
 GLenum Mode = GL_FILL;
 
 bool connectState = false;
+HANDLE DataThread;
 
 struct Packet {
 	float x_angle, y_angle; // 플레이어의 시야 각도 값
@@ -196,24 +197,25 @@ struct InitPacket {
 InitPacket initPacket;
 InPacket inPacket;
 
-void DataComm() { 
+DWORD WINAPI DataComm(LPVOID arg)
+{
 	if (connectState) {
 		Packet packet;
 		packet.x_angle = x_angle;
 		packet.y_angle = y_angle;
 		packet.arrowPosition = arrow.objectmatrix.position;
 		packet.arrowRotation = arrow.modelmatrix.rotation;
-		
+
 		retval = send(sock, (char*)&packet, sizeof(packet), 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("send()");
-			return;
+			return 1;
 		}
 
 		retval = recv(sock, (char*)&inPacket, sizeof(inPacket), MSG_WAITALL);
 		if (retval == SOCKET_ERROR) {
 			err_display("recv()");
-			return;
+			return 1;
 		}
 		other_x_angle = inPacket.x_angle;
 		other_y_angle = inPacket.y_angle;
@@ -230,7 +232,44 @@ void DataComm() {
 			}
 		}
 	}
+	return 0;
 }
+
+//void DataComm() { 
+//	if (connectState) {
+//		Packet packet;
+//		packet.x_angle = x_angle;
+//		packet.y_angle = y_angle;
+//		packet.arrowPosition = arrow.objectmatrix.position;
+//		packet.arrowRotation = arrow.modelmatrix.rotation;
+//		
+//		retval = send(sock, (char*)&packet, sizeof(packet), 0);
+//		if (retval == SOCKET_ERROR) {
+//			err_display("send()");
+//			return;
+//		}
+//
+//		retval = recv(sock, (char*)&inPacket, sizeof(inPacket), MSG_WAITALL);
+//		if (retval == SOCKET_ERROR) {
+//			err_display("recv()");
+//			return;
+//		}
+//		other_x_angle = inPacket.x_angle;
+//		other_y_angle = inPacket.y_angle;
+//		otherArrow.objectmatrix.position = inPacket.arrowPosition;
+//		otherArrow.modelmatrix.rotation = inPacket.arrowRotation;
+//		wind_dir = inPacket.wind_dir;
+//		wind_speed = inPacket.wind_speed;
+//
+//		for (int i = 0; i < circleheight * circlewidth; ++i)
+//		{
+//			if (inPacket.circleState[i] == 2)
+//			{
+//				particle_on = true;
+//			}
+//		}
+//	}
+//}
 
 void main(int argc, char* argv[])
 {
@@ -431,10 +470,13 @@ GLvoid drawScene()
 	glUseProgram(s_program);
 	glPolygonMode(GL_FRONT, Mode);
 
+	
 	if (connectState)
 	{
-		DataComm();
+		DataThread = CreateThread(NULL, 0, DataComm, NULL, 0, NULL);
 	}
+	if (DataThread == NULL) closesocket(sock);
+	else CloseHandle(DataThread);
 
 	if (main_loading == false)
 	{
