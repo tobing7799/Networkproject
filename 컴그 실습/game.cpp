@@ -199,36 +199,38 @@ InPacket inPacket;
 
 DWORD WINAPI DataComm(LPVOID arg)
 {
-	if (connectState) {
-		Packet packet;
-		packet.x_angle = x_angle;
-		packet.y_angle = y_angle;
-		packet.arrowPosition = arrow.objectmatrix.position;
-		packet.arrowRotation = arrow.modelmatrix.rotation;
+	while (1) {
+		if (connectState) {
+			Packet packet;
+			packet.x_angle = x_angle;
+			packet.y_angle = y_angle;
+			packet.arrowPosition = arrow.objectmatrix.position;
+			packet.arrowRotation = arrow.modelmatrix.rotation;
 
-		retval = send(sock, (char*)&packet, sizeof(packet), 0);
-		if (retval == SOCKET_ERROR) {
-			err_display("send()");
-			return 1;
-		}
+			retval = send(sock, (char*)&packet, sizeof(packet), 0);
+			if (retval == SOCKET_ERROR) {
+				err_display("send()");
+				return 1;
+			}
 
-		retval = recv(sock, (char*)&inPacket, sizeof(inPacket), MSG_WAITALL);
-		if (retval == SOCKET_ERROR) {
-			err_display("recv()");
-			return 1;
-		}
-		other_x_angle = inPacket.x_angle;
-		other_y_angle = inPacket.y_angle;
-		otherArrow.objectmatrix.position = inPacket.arrowPosition;
-		otherArrow.modelmatrix.rotation = inPacket.arrowRotation;
-		wind_dir = inPacket.wind_dir;
-		wind_speed = inPacket.wind_speed;
+			retval = recv(sock, (char*)&inPacket, sizeof(inPacket), MSG_WAITALL);
+			if (retval == SOCKET_ERROR) {
+				err_display("recv()");
+				return 1;
+			}
+			other_x_angle = inPacket.x_angle;
+			other_y_angle = inPacket.y_angle;
+			otherArrow.objectmatrix.position = inPacket.arrowPosition;
+			otherArrow.modelmatrix.rotation = inPacket.arrowRotation;
+			wind_dir = inPacket.wind_dir;
+			wind_speed = inPacket.wind_speed;
 
-		for (int i = 0; i < circleheight * circlewidth; ++i)
-		{
-			if (inPacket.circleState[i] == 2)
+			for (int i = 0; i < circleheight * circlewidth; ++i)
 			{
-				particle_on = true;
+				if (inPacket.circleState[i] == 2)
+				{
+					particle_on = true;
+				}
 			}
 		}
 	}
