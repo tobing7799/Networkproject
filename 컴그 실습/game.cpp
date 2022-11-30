@@ -280,6 +280,10 @@ void main(int argc, char* argv[])
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return;
 
+	DataThread = CreateThread(NULL, 0, DataComm, NULL, 0, NULL);
+	if (DataThread == NULL) closesocket(sock);
+	else CloseHandle(DataThread);
+
 	width = 800;
 	height = 800;
 
@@ -471,14 +475,6 @@ GLvoid drawScene()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(s_program);
 	glPolygonMode(GL_FRONT, Mode);
-
-	
-	if (connectState)
-	{
-		DataThread = CreateThread(NULL, 0, DataComm, NULL, 0, NULL);
-	}
-	if (DataThread == NULL) closesocket(sock);
-	else CloseHandle(DataThread);
 
 	if (main_loading == false)
 	{
