@@ -72,10 +72,9 @@ int client_index = 0;
 
 int clientScore[2];
 
-
 HANDLE hRecvEvent[2];
 HANDLE hSendEvent[2];
-
+HANDLE hThread[2];
 
 InPacket g_InPacket[2];
 Packet g_Packet[2];
@@ -119,12 +118,10 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 		err_display("send()");
 		return 1;
 	}
-	printf("%d 클라 초기값 전송\n", index);
 
 	while (1) {
-		printf("반복문 시작");
-		/*retval = WaitForSingleObject(hRecvEvent[index], INFINITY);
-		if (retval != WAIT_OBJECT_0) break;*/
+		retval = WaitForSingleObject(hRecvEvent[index], INFINITE);
+		if (retval != WAIT_OBJECT_0) break;
 
 		retval = recv(client_sock, (char*)&g_InPacket[index], sizeof(InPacket), MSG_WAITALL);
 		if (retval == SOCKET_ERROR) {
@@ -141,9 +138,11 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 		g_Packet[opositeIndex].arrowPosition = g_InPacket[index].arrowPosition;
 		g_Packet[opositeIndex].arrowRotation = g_InPacket[index].arrowRotation;
 		g_Packet[opositeIndex].x_angle = g_InPacket[index].x_angle;
-		g_Packet[opositeIndex].y_angle=	g_InPacket[index].y_angle;
+		g_Packet[opositeIndex].y_angle = g_InPacket[index].y_angle;
+		short packetScore = MAKEWORD(clientScore[index], clientScore[opositeIndex]);
+		g_Packet[index].total_score = packetScore;
 
-		/*if (index == 0) { // 0번 클라면 1번 클라 recv이벤트
+		if (index == 0) { // 0번 클라면 1번 클라 recv이벤트
 			SetEvent(hRecvEvent[opositeIndex]);
 			ResetEvent(hRecvEvent[index]);
 		}
@@ -151,8 +150,8 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 			SetEvent(hSendEvent[opositeIndex]);
 			ResetEvent(hRecvEvent[index]);
 		}
-		retval = WaitForSingleObject(hSendEvent[index], INFINITY);
-		if (retval != WAIT_OBJECT_0) break;*/
+		retval = WaitForSingleObject(hSendEvent[index], INFINITE);
+		if (retval != WAIT_OBJECT_0) break;
 		// 클라이언트로 데이터 송신
 		// 이벤트는 추후에 추가
 		retval = send(client_sock, (char*)&g_Packet[index], sizeof(Packet), 0);
@@ -160,16 +159,16 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 			err_display("send()");
 			break;
 		}
-		
+
 		// send 추가해야함
-		/*if (index == 0) { // 0번 클라면 1번 클라 recv이벤트
+		if (index == 0) { // 0번 클라면 1번 클라 recv이벤트
 			SetEvent(hSendEvent[opositeIndex]);
 			ResetEvent(hSendEvent[index]);
 		}
 		else { // 1번 클라면 0번 클라 send이벤트
 			SetEvent(hRecvEvent[opositeIndex]);
 			ResetEvent(hSendEvent[index]);
-		}*/
+		}
 	}
 
 	closesocket(client_sock);
@@ -246,56 +245,44 @@ int main(int argc, char* argv[])
 	struct sockaddr_in clientaddr[2];
 	int addrlen[2];
 	SocketWithIndex swi[2];
-	HANDLE hThread;
 
-	while (1) {
-		// accept()
-		addrlen[0] = sizeof(clientaddr[0]);
-		client_sock[0] = accept(listen_sock, (struct sockaddr*)&clientaddr[0], &addrlen[0]);
-		if (client_sock[0] == INVALID_SOCKET) {
-			err_display("accept()");
-			break;
-		}
-		swi[0].sock = client_sock[0];
-		swi[0].index = 0;
-
-		// 2번째 클라이언트도 받게 대기
-
-		addrlen[1] = sizeof(clientaddr[1]);
-		client_sock[1] = accept(listen_sock, (struct sockaddr*)&clientaddr[1], &addrlen[1]);
-		if (client_sock[1] == INVALID_SOCKET) {
-			err_display("accept()");
-			break;
-		}
-		swi[1].sock = client_sock[1];
-		swi[1].index = 1;
-
-		//hRecvEvent[0] = CreateEvent(NULL, FALSE, FALSE, NULL);
-		//hSendEvent[0] = CreateEvent(NULL, FALSE, FALSE, NULL);
-		//hRecvEvent[1] = CreateEvent(NULL, FALSE, FALSE, NULL);
-		//hSendEvent[1] = CreateEvent(NULL, FALSE, FALSE, NULL);
-		
-		//SetEvent(hRecvEvent[0]);
-
-		// 통신을 위한 ClinetMgr 시작
-		hThread = CreateThread(NULL, 0, ClientMgr, &swi[0], 0, NULL);
-		if (hThread == NULL) closesocket(client_sock[0]);
-		else CloseHandle(hThread);
-		hThread = CreateThread(NULL, 0, ClientMgr, &swi[1], 0, NULL);
-		if (hThread == NULL) closesocket(client_sock[1]);
-		else CloseHandle(hThread);
-
-		windTime = time(NULL);
-		hWindThread = CreateThread(NULL, 0, windTimer, NULL, 0, NULL);
-		if (hWindThread != NULL) CloseHandle(hWindThread);
-
-		// 접속한 클라이언트 정보 출력
-		//char addr[INET_ADDRSTRLEN];
-		//inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
-		//printf("\n[TCP 서버] 클라이언트 접속: IP 주소=%s, 포트 번호=%d\n", addr, ntohs(clientaddr.sin_port));
-
-		//printf("[TCP 서버] 클라이언트 종료: IP 주소=%s, 포트 번호=%d\n", addr, ntohs(clientaddr.sin_port));
+	addrlen[0] = sizeof(clientaddr[0]);
+	client_sock[0] = accept(listen_sock, (struct sockaddr*)&clientaddr[0], &addrlen[0]);
+	if (client_sock[0] == INVALID_SOCKET) {
+		err_quit("accept()");
 	}
+	swi[0].sock = client_sock[0];
+	swi[0].index = 0;
+
+	// 2번째 클라이언트도 받게 대기
+
+	addrlen[1] = sizeof(clientaddr[1]);
+	client_sock[1] = accept(listen_sock, (struct sockaddr*)&clientaddr[1], &addrlen[1]);
+	if (client_sock[1] == INVALID_SOCKET) {
+		err_quit("accept()");
+	}
+	swi[1].sock = client_sock[1];
+	swi[1].index = 1;
+
+	// 통신을 위한 ClinetMgr 시작
+	hThread[0] = CreateThread(NULL, 0, ClientMgr, &swi[0], 0, NULL);
+	hThread[1] = CreateThread(NULL, 0, ClientMgr, &swi[1], 0, NULL);
+	
+	windTime = time(NULL);
+	hWindThread = CreateThread(NULL, 0, windTimer, NULL, 0, NULL);
+	if (hWindThread != NULL) CloseHandle(hWindThread);
+
+	hRecvEvent[0] = CreateEvent(NULL, TRUE, TRUE, NULL);
+	hSendEvent[0] = CreateEvent(NULL, TRUE, FALSE, NULL);
+	hRecvEvent[1] = CreateEvent(NULL, TRUE, FALSE, NULL);
+	hSendEvent[1] = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+	WaitForMultipleObjects(2, hThread, false, INFINITE);
+
+	CloseHandle(hRecvEvent[0]);
+	CloseHandle(hRecvEvent[1]);
+	CloseHandle(hSendEvent[0]);
+	CloseHandle(hSendEvent[1]);
 
 	// 소켓 닫기
 	closesocket(listen_sock);
@@ -311,8 +298,8 @@ InitPacket InitializePacket()
 
 	for (int i = 0; i < CIRCLENUMWIDTH; ++i) {
 		for (int j = 0; j < CIRCLENUMHEIGHT; ++j) {
-			g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f,  urd(dre));
-			g_circleState[5 * i + j] = CIRCLE_ON;		
+			g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f, urd(dre));
+			g_circleState[5 * i + j] = CIRCLE_ON;
 		}
 	}
 	std::sort(g_circleCenter, g_circleCenter + CIRCLENUM, [](const glm::vec3& a, const glm::vec3& b) {
@@ -338,9 +325,9 @@ void CircleMgr(const glm::vec3& pos, int index)
 				g_Packet[0].circleState[i] = g_Packet[0].circleState[i] = g_circleState[i] = CIRCLE_PARTICLE;
 			}
 		}
-		else if (g_circleState[i] == CIRCLE_PARTICLE)
+		else if (g_circleState[i] == CIRCLE_PARTICLE && index == 0)
 		{
-			g_Packet[0].circleState[i] = g_Packet[1].circleState[i] =  g_circleState[i] = CIRCLE_OFF;
+			g_Packet[0].circleState[i] = g_Packet[1].circleState[i] = g_circleState[i] = CIRCLE_OFF;
 		}
 	}
 }
