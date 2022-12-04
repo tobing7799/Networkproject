@@ -37,6 +37,7 @@ struct Packet {
 	short wind_dir; // 바람의 방향
 	float wind_speed; // 바람의 세기
 	short circleState[CIRCLENUM]; // 과녁의 상태
+	int stage;
 };
 
 struct InitPacket {
@@ -56,6 +57,7 @@ short g_circleState[CIRCLENUM];
 InitPacket InitializePacket();
 DWORD WINAPI windTimer(short winddir, float windspeed);
 void CircleMgr(const glm::vec3& pos, int index);
+void nextStage();
 
 bool ArrowCheck(const glm::vec3& pos, int circleIndex, int index);
 
@@ -315,8 +317,22 @@ InitPacket InitializePacket()
 	return packet;
 }
 
+void nextStage()
+{
+	stage++;
+	if (stage > 3) {
+		stage = 0;
+	}
+	g_Packet[0].stage = stage;
+	g_Packet[1].stage = stage;
+}
+
 void CircleMgr(const glm::vec3& pos, int index)
 {
+	if (CIRCLENUM == 0) {
+		nextStage();
+	}
+
 	for (int i = 0; i < CIRCLENUM; ++i)
 	{
 		if (g_circleState[i] == CIRCLE_ON)

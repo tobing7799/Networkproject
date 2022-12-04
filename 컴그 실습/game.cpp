@@ -186,6 +186,7 @@ struct InPacket {
 	short wind_dir; // 바람의 방향
 	float wind_speed; // 바람의 세기
 	short circleState[CIRCLENUM]; // 과녁의 상태
+	int stage;
 };
 
 struct InitPacket {
@@ -225,6 +226,10 @@ DWORD WINAPI DataComm(LPVOID arg)
 			wind_dir = inPacket.wind_dir;
 			wind_speed = inPacket.wind_speed;
 
+			if (stage != inPacket.stage)
+				pass = true;
+			stage = inPacket.stage;
+
 			for (int i = 0; i < circleheight * circlewidth; ++i)
 			{
 				if (inPacket.circleState[i] == 2)
@@ -236,42 +241,6 @@ DWORD WINAPI DataComm(LPVOID arg)
 	}
 	return 0;
 }
-
-//void DataComm() { 
-//	if (connectState) {
-//		Packet packet;
-//		packet.x_angle = x_angle;
-//		packet.y_angle = y_angle;
-//		packet.arrowPosition = arrow.objectmatrix.position;
-//		packet.arrowRotation = arrow.modelmatrix.rotation;
-//		
-//		retval = send(sock, (char*)&packet, sizeof(packet), 0);
-//		if (retval == SOCKET_ERROR) {
-//			err_display("send()");
-//			return;
-//		}
-//
-//		retval = recv(sock, (char*)&inPacket, sizeof(inPacket), MSG_WAITALL);
-//		if (retval == SOCKET_ERROR) {
-//			err_display("recv()");
-//			return;
-//		}
-//		other_x_angle = inPacket.x_angle;
-//		other_y_angle = inPacket.y_angle;
-//		otherArrow.objectmatrix.position = inPacket.arrowPosition;
-//		otherArrow.modelmatrix.rotation = inPacket.arrowRotation;
-//		wind_dir = inPacket.wind_dir;
-//		wind_speed = inPacket.wind_speed;
-//
-//		for (int i = 0; i < circleheight * circlewidth; ++i)
-//		{
-//			if (inPacket.circleState[i] == 2)
-//			{
-//				particle_on = true;
-//			}
-//		}
-//	}
-//}
 
 void main(int argc, char* argv[])
 {
@@ -371,7 +340,7 @@ void main(int argc, char* argv[])
 	bow.objectmatrix.position = glm::vec3(arrow.objectmatrix.position.x - 0.07, arrow.objectmatrix.position.y, 0.0);
 	otherBow.objectmatrix.position = glm::vec3(otherArrow.objectmatrix.position.x - 0.07, otherArrow.objectmatrix.position.y, 0.0);
 
-	stage = 0;
+	// stage = 0;
 	mciOpen.lpstrElementName = "브금1.mp3";
 	mciOpen.lpstrDeviceType = "mpegvideo";
 
@@ -1754,26 +1723,33 @@ void Timer(int value)
 	}
 	
 
-	if (total_score >= 30 && pass)
+	if (pass)
 	{
-		stage += 1;
-		total_score = 0;
+		// stage += 1;
+		// total_score = 0;
 		t = 0;
 		v = 0;
+		y_angle = 0;
+		x_angle = 0;
 		camera_x = bow.objectmatrix.position.x + 0.2;
 		camera_y = bow.objectmatrix.position.y + 0.2;
 		camera_z = bow.objectmatrix.position.z + 0.6;
-		arrow_x = 0;
+		arrow_x = 0.07;
 		arrow_y = 0;
-		arrow_z = 0;
+		arrow_z = 0.5;
 		arrow_on = false;
 		score_on = false;
+		arrow.objectmatrix.position = initPacket.player1Pos;
+
+		arrow.modelmatrix.rotation.x = 0;
+		arrow.modelmatrix.rotation.y = 0;
+		arrow.modelmatrix.rotation.z = 0;
+
 		pass = false;
-		arrow.objectmatrix.position = bow.objectmatrix.position;
-		if (stage > 3)
+		/*if (stage > 3)
 		{
 			stage = 0;
-		}
+		}*/
 		mciSendCommand(dwID, MCI_STOP, 0, (DWORD)(LPVOID)&m_mciPlayParms);
 		switch (stage) {
 		case 0:
