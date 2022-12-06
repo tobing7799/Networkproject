@@ -160,6 +160,9 @@ bool particle_on = false;
 int particle_way_x[CUBE_SIZE];
 int particle_way_y[CUBE_SIZE];
 
+int myScore = 0;
+int otherScore = 0;
+
 int number_1 = 0;
 int number_10 = 0;
 
@@ -225,6 +228,8 @@ DWORD WINAPI DataComm(LPVOID arg)
 			otherArrow.modelmatrix.rotation = inPacket.arrowRotation;
 			wind_dir = inPacket.wind_dir;
 			wind_speed = inPacket.wind_speed;
+			myScore = LOBYTE(inPacket.total_score);
+			otherScore = HIBYTE(inPacket.total_score);
 
 			if (stage != inPacket.stage)
 				pass = true;
@@ -485,7 +490,7 @@ GLvoid drawScene()
 
 		for (int i = 0; i < circleheight*circlewidth; ++i) {
 			for (int j = 0; j < 10; ++j) {
-				//if(inPacket.circleState[i]) 
+				if(inPacket.circleState[i]) 
 					circleTest[i][j].Draw(s_program);
 			}
 		}
@@ -576,7 +581,7 @@ GLvoid drawScene()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glActiveTexture(GL_TEXTURE0);
 
-		board.Draw1(s_program, number_10);
+		board.Draw1(s_program, myScore/10);
 
 		glViewport(200, 700, 100, 100);
 		cameratransform3 = glm::mat4(1.0f);
@@ -603,7 +608,7 @@ GLvoid drawScene()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glActiveTexture(GL_TEXTURE0);
 
-		board.Draw2(s_program, number_1);
+		board.Draw2(s_program, myScore % 10);
 
 		switch (wind_dir) {
 		case 1:
@@ -743,7 +748,7 @@ GLvoid drawScene()
 		board.Draw5(s_program);
 	}
 
-	//임시로 상대 화면은 내 화면이 되도록 만들음
+	//상대화면
 	glViewport(800, 0, 800, 800);
 	if (main_loading == false)
 	{
@@ -775,7 +780,7 @@ GLvoid drawScene()
 
 		for (int i = 0; i < circleheight * circlewidth; ++i) {
 			for (int j = 0; j < 10; ++j) {
-				//if (inPacket.circleState[i]) 
+				if (inPacket.circleState[i]) 
 					circleTest[i][j].Draw(s_program);
 			}
 		}
@@ -865,7 +870,7 @@ GLvoid drawScene()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glActiveTexture(GL_TEXTURE0);
 
-		board.Draw1(s_program, number_10);
+		board.Draw1(s_program, otherScore/10);
 
 		glViewport(1000, 700, 100, 100);
 		cameratransform3 = glm::mat4(1.0f);
@@ -892,7 +897,7 @@ GLvoid drawScene()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glActiveTexture(GL_TEXTURE0);
 
-		board.Draw2(s_program, number_1);
+		board.Draw2(s_program, otherScore % 10);
 
 		switch (wind_dir) {
 		case 1:
@@ -1710,7 +1715,7 @@ void Timer(int value)
 		particle_during -= 0.01;
 		if (particle_during < 0)
 		{
-			particle_during = 1.0;
+			particle_during = 1.0f;
 			particle_on = false;
 			particle_speed = 0;
 			for (int i = 0; i < CUBE_SIZE; ++i)
