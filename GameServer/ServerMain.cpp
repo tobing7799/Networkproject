@@ -207,6 +207,7 @@ DWORD WINAPI windTimer(LPVOID arg) {
 			g_Packet[1].wind_speed = windspeed;
 			std::cout << winddir << std::endl;
 			LeaveCriticalSection(&cs);
+			printf("0클라 : %d 1클라 : %d\n", clientScore[0], clientScore[1]);
 		}
 	}
 }
@@ -300,7 +301,8 @@ InitPacket InitializePacket()
 
 	for (int i = 0; i < CIRCLENUMWIDTH; ++i) {
 		for (int j = 0; j < CIRCLENUMHEIGHT; ++j) {
-			g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f, urd(dre));
+			//g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f, urd(dre));
+			g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f, 40.f);
 			g_circleState[5 * i + j] = CIRCLE_ON;
 		}
 	}
@@ -309,6 +311,7 @@ InitPacket InitializePacket()
 		});
 	for (int i = 0; i < CIRCLENUM; ++i) {
 		packet.circleCenter[i] = g_circleCenter[i];
+		g_Packet[0].circleState[i] = g_Packet[1].circleState[i] = g_circleState[i];
 		printf("%f, %f %f\n", packet.circleCenter[i].x, packet.circleCenter[i].y, packet.circleCenter[i].z);
 	}
 	packet.player1Pos = glm::vec3(-1.f, 0, 0);
@@ -332,13 +335,16 @@ void CircleMgr(const glm::vec3& pos, int index)
 	if (CIRCLENUM == 0) {
 		nextStage();
 	}
-
+	//EnterCriticalSection(&cs);
 	for (int i = 0; i < CIRCLENUM; ++i)
 	{
-		if (g_circleState[i] == CIRCLE_ON)
+		if (g_circleState[i] == CIRCLE_OFF)
+			continue;
+		else if (g_circleState[i] == CIRCLE_ON)
 		{
 			if (ArrowCheck(pos, i, index)) {
-				g_Packet[0].circleState[i] = g_Packet[0].circleState[i] = g_circleState[i] = CIRCLE_PARTICLE;
+				g_Packet[0].circleState[i] = g_Packet[1].circleState[i] = g_circleState[i] = CIRCLE_PARTICLE;
+				break;
 			}
 		}
 		else if (g_circleState[i] == CIRCLE_PARTICLE && index == 0)
@@ -346,15 +352,16 @@ void CircleMgr(const glm::vec3& pos, int index)
 			g_Packet[0].circleState[i] = g_Packet[1].circleState[i] = g_circleState[i] = CIRCLE_OFF;
 		}
 	}
+	//LeaveCriticalSection(&cs);
 }
 
 bool ArrowCheck(const glm::vec3& pos, int circleIndex, int index)
 {
 	int score{};
-	if (pos.z < g_circleCenter[circleIndex].z)
-		return false;
+	//if (pos.z < g_circleCenter[circleIndex].z)
+		//return false;
 
-	if (pos.z > g_circleCenter[circleIndex].z && pos.z < g_circleCenter[circleIndex].z + 0.1) { // 일단 오차 0.1
+	if (pos.z >= 40.f) { // 일단 오차 0.1
 		score = 10;
 		for (int i = 0; i < 10; ++i) {
 			if (sqrt(pow(g_circleCenter[circleIndex].x - pos.x, 2.0) + pow(g_circleCenter[circleIndex].y - pos.y, 2.0)) <= (i * 0.1 + 0.1)) // wind_x, wind_y 일단 제외
@@ -363,6 +370,8 @@ bool ArrowCheck(const glm::vec3& pos, int circleIndex, int index)
 					score = i;
 			}
 		}
+		if (score == 10)
+			return false;
 		clientScore[index] += 10 - score;
 		return true;
 	}
