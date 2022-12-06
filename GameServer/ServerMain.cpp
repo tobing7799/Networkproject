@@ -302,13 +302,13 @@ InitPacket InitializePacket()
 	for (int i = 0; i < CIRCLENUMWIDTH; ++i) {
 		for (int j = 0; j < CIRCLENUMHEIGHT; ++j) {
 			//g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f, urd(dre));
-			g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f, 40.f);
+			g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 3.f, (j) * 3.f, 40.f);
 			g_circleState[5 * i + j] = CIRCLE_ON;
 		}
 	}
-	std::sort(g_circleCenter, g_circleCenter + CIRCLENUM, [](const glm::vec3& a, const glm::vec3& b) {
-		return a.z > b.z;
-		});
+	//std::sort(g_circleCenter, g_circleCenter + CIRCLENUM, [](const glm::vec3& a, const glm::vec3& b) {
+	//	return a.z > b.z;
+	//	});
 	for (int i = 0; i < CIRCLENUM; ++i) {
 		packet.circleCenter[i] = g_circleCenter[i];
 		g_Packet[0].circleState[i] = g_Packet[1].circleState[i] = g_circleState[i];
@@ -335,7 +335,7 @@ void CircleMgr(const glm::vec3& pos, int index)
 	if (CIRCLENUM == 0) {
 		nextStage();
 	}
-	//EnterCriticalSection(&cs);
+	EnterCriticalSection(&cs);
 	for (int i = 0; i < CIRCLENUM; ++i)
 	{
 		if (g_circleState[i] == CIRCLE_OFF)
@@ -352,7 +352,7 @@ void CircleMgr(const glm::vec3& pos, int index)
 			g_Packet[0].circleState[i] = g_Packet[1].circleState[i] = g_circleState[i] = CIRCLE_OFF;
 		}
 	}
-	//LeaveCriticalSection(&cs);
+	LeaveCriticalSection(&cs);
 }
 
 bool ArrowCheck(const glm::vec3& pos, int circleIndex, int index)
@@ -361,7 +361,7 @@ bool ArrowCheck(const glm::vec3& pos, int circleIndex, int index)
 	//if (pos.z < g_circleCenter[circleIndex].z)
 		//return false;
 
-	if (pos.z >= 40.f) { // 일단 오차 0.1
+	if (pos.z >= 40.f) {
 		score = 10;
 		for (int i = 0; i < 10; ++i) {
 			if (sqrt(pow(g_circleCenter[circleIndex].x - pos.x, 2.0) + pow(g_circleCenter[circleIndex].y - pos.y, 2.0)) <= (i * 0.1 + 0.1)) // wind_x, wind_y 일단 제외
@@ -373,6 +373,7 @@ bool ArrowCheck(const glm::vec3& pos, int circleIndex, int index)
 		if (score == 10)
 			return false;
 		clientScore[index] += 10 - score;
+		//printf("%d 클라가 %d점 오름\n", index, 10 - score);
 		return true;
 	}
 	return false;
