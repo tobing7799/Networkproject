@@ -44,7 +44,7 @@ void Line::Initialize()
 	glEnableVertexAttribArray(3);
 
 }
-void Line::Update(float line_v, float angle_x, float angle_y)
+void Line::Update(float line_v, float angle_x, float angle_y, float arrow_x)
 {
 	time = 0;
 
@@ -73,7 +73,7 @@ void Line::Update(float line_v, float angle_x, float angle_y)
 			line_x = 0;
 		}
 
-		vertexdata[i] = glm::vec3(line_x, line_y, line_z);
+		vertexdata[i] = glm::vec3(line_x+ arrow_x, line_y, line_z);
 	}
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);

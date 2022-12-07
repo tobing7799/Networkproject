@@ -1584,7 +1584,7 @@ void Timer(int value)
 
 	if (arrow_on)
 	{
-		if (arrow_z < 90.0 && arrow_y > -10.0)
+		if (arrow_z < 40.0 && arrow_y > -10.0)
 		{
 			switch (wind_dir) {
 			case 0:
@@ -1758,38 +1758,8 @@ void Timer(int value)
 		mciSendCommand(dwID, MCI_STOP, 0, (DWORD)(LPVOID)&m_mciPlayParms);
 		switch (stage) {
 		case 0:
-			mciOpen.lpstrElementName = "브금1.mp3";
-			mciOpen.lpstrDeviceType = "mpegvideo";
-
-			mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-				(DWORD)(LPVOID)&mciOpen);
-
-			dwID = mciOpen.wDeviceID;
-
-			mciSendCommand(dwID, MCI_PLAY, MCI_DGV_PLAY_REPEAT, (DWORD)(LPVOID)&m_mciPlayParms);
-			break;
 		case 1:
-			mciOpen.lpstrElementName = "브금1.mp3";
-			mciOpen.lpstrDeviceType = "mpegvideo";
-
-			mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-				(DWORD)(LPVOID)&mciOpen);
-
-			dwID = mciOpen.wDeviceID;
-
-			mciSendCommand(dwID, MCI_PLAY, MCI_DGV_PLAY_REPEAT, (DWORD)(LPVOID)&m_mciPlayParms);
-			break;
 		case 2:
-			mciOpen.lpstrElementName = "브금1.mp3";
-			mciOpen.lpstrDeviceType = "mpegvideo";
-
-			mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-				(DWORD)(LPVOID)&mciOpen);
-
-			dwID = mciOpen.wDeviceID;
-
-			mciSendCommand(dwID, MCI_PLAY, MCI_DGV_PLAY_REPEAT, (DWORD)(LPVOID)&m_mciPlayParms);
-			break;
 		case 3:
 			mciOpen.lpstrElementName = "브금1.mp3";
 			mciOpen.lpstrDeviceType = "mpegvideo";
@@ -1806,7 +1776,7 @@ void Timer(int value)
 
 	if (left_button)
 	{
-		line.Update(v, y_angle, -x_angle * PI / 180.0);
+		line.Update(v, y_angle, -x_angle * PI / 180.0 , arrow.objectmatrix.position.x);
 	}
 
 	if (left_button && arrow_on == false)
@@ -2126,7 +2096,7 @@ bool CreateSocekt()
 	otherCamera_y = otherBow.objectmatrix.position.y + 0.2;
 	otherCamera_z = otherBow.objectmatrix.position.z + 0.6;
 
-	line.objectmatrix.position = bow.objectmatrix.position;
+	//line.objectmatrix.position = arrow.objectmatrix.position;
 
 	return true;
 }

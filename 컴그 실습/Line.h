@@ -14,6 +14,6 @@ public:
 	float line_z = 0;
 
 	void Initialize();
-	void Update(float line_v, float angle_x, float angle_y);
+	void Update(float line_v, float angle_x, float angle_y, float arrow_x);
 	void Draw(int programID); 
 };
