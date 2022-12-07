@@ -16,8 +16,8 @@
 
 char* SERVERIP = (char*)"127.0.0.2"; // default local
 #define SERVERPORT 9000
-const int CIRCLENUMWIDTH = 5;
-const int CIRCLENUMHEIGHT = 5;
+const int CIRCLENUMWIDTH = 1;
+const int CIRCLENUMHEIGHT = 1;
 const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT; //서버에서 보내주는 것으로 바꿔야함
 
 
@@ -216,11 +216,28 @@ DWORD WINAPI DataComm(LPVOID arg)
 				err_display("send()");
 				return 1;
 			}
-
-			retval = recv(sock, (char*)&inPacket, sizeof(inPacket), MSG_WAITALL);
+			int inDataSize;
+			retval = recv(sock, (char*)&inDataSize, sizeof(int), MSG_WAITALL);
 			if (retval == SOCKET_ERROR) {
 				err_display("recv()");
 				return 1;
+			}
+			if (inDataSize < sizeof(inPacket)) {
+				char msg[5];
+				retval = recv(sock, msg, 5, MSG_WAITALL);
+				if (msg[0] == 'w')
+					printf("you win!\n");
+				else
+					printf("you lose\n");
+
+				Sleep(1000);
+			}
+			else {
+				retval = recv(sock, (char*)&inPacket, sizeof(inPacket), MSG_WAITALL);
+				if (retval == SOCKET_ERROR) {
+					err_display("recv()");
+					return 1;
+				}
 			}
 			other_x_angle = inPacket.x_angle;
 			other_y_angle = inPacket.y_angle;

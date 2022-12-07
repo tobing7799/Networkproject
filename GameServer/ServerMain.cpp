@@ -9,8 +9,8 @@
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
-const int CIRCLENUMWIDTH = 5;
-const int CIRCLENUMHEIGHT = 5;
+const int CIRCLENUMWIDTH = 1;
+const int CIRCLENUMHEIGHT = 1;
 const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT;
 
 int stage = 0; // 스테이지 넘버
@@ -86,6 +86,7 @@ HANDLE hWindThread;
 
 short winddir;
 float windspeed;
+bool StartNewGame;
 
 DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 	SocketWithIndex* swi = (SocketWithIndex*)arg;
@@ -155,14 +156,36 @@ DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 		retval = WaitForSingleObject(hSendEvent[index], INFINITE);
 		if (retval != WAIT_OBJECT_0) break;
 		// 클라이언트로 데이터 송신
-		// 이벤트는 추후에 추가
-		retval = send(client_sock, (char*)&g_Packet[index], sizeof(Packet), 0);
-		if (retval == SOCKET_ERROR) {
-			err_display("send()");
-			break;
-		}
 
-		// send 추가해야함
+		if (StartNewGame) {
+			int winner = clientScore[0] > clientScore[1] ? 0 : 1;
+			if (winner == index) {
+				char msg[5] = "win";
+				int msgLen = strlen(msg);
+				retval = send(client_sock, (char*)&msgLen, sizeof(int), 0);
+				retval = send(client_sock, msg, sizeof(msg), 0);
+			}
+			else {
+				char msg[5] = "lose";
+				int msgLen = strlen(msg);
+				retval = send(client_sock, (char*)&msgLen, sizeof(int), 0);
+				retval = send(client_sock, msg, sizeof(msg), 0);
+			}
+			
+			if (index == 1) {
+				StartNewGame = false;
+				clientScore[0] = clientScore[1] = 0;
+			}
+		}
+		else {
+			int packetSize = sizeof(Packet);
+			retval = send(client_sock, (char*)&packetSize, sizeof(int), 0);
+			retval = send(client_sock, (char*)&g_Packet[index], sizeof(Packet), 0);
+			if (retval == SOCKET_ERROR) {
+				err_display("send()");
+				break;
+			}
+		}
 		if (index == 0) { // 0번 클라면 1번 클라 recv이벤트
 			SetEvent(hSendEvent[opositeIndex]);
 			ResetEvent(hSendEvent[index]);
@@ -302,8 +325,8 @@ InitPacket InitializePacket()
 	for (int i = 0; i < CIRCLENUMWIDTH; ++i) {
 		for (int j = 0; j < CIRCLENUMHEIGHT; ++j) {
 			//g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f, urd(dre));
-			g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 3.f, (j) * 3.f, 40.f);
-			g_circleState[5 * i + j] = CIRCLE_ON;
+			g_circleCenter[1 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 3.f, (j) * 3.f, 40.f);
+			g_circleState[1 * i + j] = CIRCLE_ON;
 		}
 	}
 	//std::sort(g_circleCenter, g_circleCenter + CIRCLENUM, [](const glm::vec3& a, const glm::vec3& b) {
@@ -332,14 +355,14 @@ void nextStage()
 
 void CircleMgr(const glm::vec3& pos, int index)
 {
-	if (CIRCLENUM == 0) {
-		nextStage();
-	}
 	EnterCriticalSection(&cs);
+	int count{};
 	for (int i = 0; i < CIRCLENUM; ++i)
 	{
-		if (g_circleState[i] == CIRCLE_OFF)
+		if (g_circleState[i] == CIRCLE_OFF) {
+			count++;
 			continue;
+		}
 		else if (g_circleState[i] == CIRCLE_ON)
 		{
 			if (ArrowCheck(pos, i, index)) {
@@ -350,6 +373,15 @@ void CircleMgr(const glm::vec3& pos, int index)
 		else if (g_circleState[i] == CIRCLE_PARTICLE && index == 0)
 		{
 			g_Packet[0].circleState[i] = g_Packet[1].circleState[i] = g_circleState[i] = CIRCLE_OFF;
+		}
+	}
+	if (count == CIRCLENUM) {
+		if (index == 1) {
+			nextStage();
+			for (int i = 0; i < CIRCLENUM; ++i) {
+				g_Packet[0].circleState[i] = g_Packet[1].circleState[i] = g_circleState[i] = CIRCLE_ON;
+			}
+			StartNewGame = true;
 		}
 	}
 	LeaveCriticalSection(&cs);
