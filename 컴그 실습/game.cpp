@@ -79,7 +79,7 @@ CubeMap background;
 Arrow arrow;
 Circle circle[10];
 
-Circle **circleTest;
+Circle **circles;
 int circlewidth;
 int circleheight;
 
@@ -502,7 +502,7 @@ GLvoid drawScene()
 		for (int i = 0; i < circleheight*circlewidth; ++i) {
 			for (int j = 0; j < 10; ++j) {
 				if(inPacket.circleState[i]) 
-					circleTest[i][j].Draw(s_program);
+					circles[i][j].Draw(s_program);
 			}
 		}
 
@@ -845,7 +845,7 @@ GLvoid drawScene()
 		for (int i = 0; i < circleheight * circlewidth; ++i) {
 			for (int j = 0; j < 10; ++j) {
 				if (inPacket.circleState[i]) 
-					circleTest[i][j].Draw(s_program);
+					circles[i][j].Draw(s_program);
 			}
 		}
 
@@ -2093,43 +2093,43 @@ bool CreateSocekt()
 		return true;
 	}
 
-	circleTest = new Circle *[circlewidth * circleheight];
+	circles = new Circle *[circlewidth * circleheight];
 	for (int i = 0; i < circleheight * circlewidth; ++i)
 	{
-		circleTest[i] = new Circle[10];
+		circles[i] = new Circle[10];
 	}
 
 	for (int i = 0; i < circleheight * circlewidth; ++i) {
 		for (int j = 0; j < 10; j++)
 		{
-			circleTest[i][j].Initialize();
-			circleTest[i][j].objectmatrix.position = glm::vec3(0, 0, 0);
-			circleTest[i][j].objectmatrix.rotation = glm::vec3(0, 0, 0);
-			circleTest[i][j].objectmatrix.scale = glm::vec3(1, 1, 1);
-			circleTest[i][j].modelmatrix.position = glm::vec3(0, 0, 0);
-			circleTest[i][j].modelmatrix.rotation = glm::vec3(0, 0, 0);
-			circleTest[i][j].modelmatrix.scale = glm::vec3(1, 1, 1);
+			circles[i][j].Initialize();
+			circles[i][j].objectmatrix.position = glm::vec3(0, 0, 0);
+			circles[i][j].objectmatrix.rotation = glm::vec3(0, 0, 0);
+			circles[i][j].objectmatrix.scale = glm::vec3(1, 1, 1);
+			circles[i][j].modelmatrix.position = glm::vec3(0, 0, 0);
+			circles[i][j].modelmatrix.rotation = glm::vec3(0, 0, 0);
+			circles[i][j].modelmatrix.scale = glm::vec3(1, 1, 1);
 		}
 	}
 	for (int i = 0; i < circleheight * circlewidth; ++i) {
 
-		circleTest[i][0].Update(1.0, 1.0, 0.7);
-		circleTest[i][1].Update(1.0, 1.0, 0.0);
-		circleTest[i][2].Update(1.0, 0.2, 0.2);
-		circleTest[i][3].Update(1.0, 0.0, 0.0);
-		circleTest[i][4].Update(0.2, 0.2, 1.0);
-		circleTest[i][5].Update(0.0, 0.0, 1.0);
-		circleTest[i][6].Update(0.2, 0.2, 0.2);
-		circleTest[i][7].Update(0.4, 0.4, 0.4);
-		circleTest[i][8].Update(0.6, 0.6, 0.6);
-		circleTest[i][9].Update(0.8, 0.8, 0.8);
+		circles[i][0].Update(1.0, 1.0, 0.7);
+		circles[i][1].Update(1.0, 1.0, 0.0);
+		circles[i][2].Update(1.0, 0.2, 0.2);
+		circles[i][3].Update(1.0, 0.0, 0.0);
+		circles[i][4].Update(0.2, 0.2, 1.0);
+		circles[i][5].Update(0.0, 0.0, 1.0);
+		circles[i][6].Update(0.2, 0.2, 0.2);
+		circles[i][7].Update(0.4, 0.4, 0.4);
+		circles[i][8].Update(0.6, 0.6, 0.6);
+		circles[i][9].Update(0.8, 0.8, 0.8);
 	}
 
 	for (int i = 0; i < circlewidth* circleheight; ++i) {
 		for (int j = 0; j < 10; ++j) {
-			circleTest[i][j].objectmatrix.position = initPacket.circleCenter[i];
-			circleTest[i][j].objectmatrix.position.z += 0.001 * j;
-			circleTest[i][j].objectmatrix.scale = glm::vec3(j * 0.1 + 0.1, j * 0.1 + 0.1, 1.0);
+			circles[i][j].objectmatrix.position = initPacket.circleCenter[i];
+			circles[i][j].objectmatrix.position.z += 0.001 * j;
+			circles[i][j].objectmatrix.scale = glm::vec3(j * 0.1 + 0.1, j * 0.1 + 0.1, 1.0);
 		}
 	}
 	
