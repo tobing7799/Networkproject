@@ -18,7 +18,7 @@
 #include "Mmsystem.h"
 #include "Digitalv.h"
 
-extern unsigned int texture[44];
+extern unsigned int texture[45];
 
 struct Transform {
 	glm::vec3 position;

@@ -55,9 +55,14 @@ glm::mat4 cameratransform5;
 glm::mat4 cameratransform6;
 
 glm::mat4 cameratransform7;
-glm::mat4 cameratransform8;
+glm::mat4 cameratransform9;
 
-unsigned int texture[44];
+glm::mat4 cameratransform8;
+glm::mat4 cameratransform10;
+
+glm::mat4 cameratransform11;
+
+unsigned int texture[45];
 
 GLuint shaderID;
 GLint width, height;
@@ -159,9 +164,13 @@ float particle_speed = 0;
 bool particle_on = false;
 int particle_way_x[CUBE_SIZE];
 int particle_way_y[CUBE_SIZE];
+glm::vec3 hitPos = { 0,0,0 };
 
 int myScore = 0;
 int otherScore = 0;
+
+int myWin = 0;
+int otherWin = 0;
 
 int number_1 = 0;
 int number_10 = 0;
@@ -239,7 +248,11 @@ DWORD WINAPI DataComm(LPVOID arg)
 			{
 				if (inPacket.circleState[i] == 2)
 				{
-					particle_on = true;
+					if (sqrt(pow(initPacket.circleCenter[i].x - arrow.objectmatrix.position.x, 2.0) + pow(initPacket.circleCenter[i].y - arrow.objectmatrix.position.y, 2.0)) <= (1.0))
+					{
+						particle_on = true;
+						hitPos = initPacket.circleCenter[i];
+					}
 				}
 			}
 		}
@@ -330,7 +343,7 @@ void main(int argc, char* argv[])
 	for (int i = 0; i < CUBE_SIZE; i++)
 	{
 		paticle[i].modelmatrix.scale = glm::vec3(0.1, 0.1, 0.1);
-		paticle[i].modelmatrix.position = glm::vec3(0.0, 0.0, 90.0);
+		paticle[i].modelmatrix.position = glm::vec3(0.0, 0.0, 40.0);
 		particle_way_x[i] = rand() % 360;
 		particle_way_y[i] = rand() % 360;
 	}
@@ -692,7 +705,7 @@ GLvoid drawScene()
 
 		board.Draw4(s_program, wind_speed);
 
-		glViewport(200, 800, 400, 50);
+		glViewport(150, 800, 400, 50);
 		cameratransform7 = glm::mat4(1.0f);
 		cameratransform7 = glm::rotate(cameratransform7, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
 		cameratransform7 = glm::rotate(cameratransform7, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
@@ -718,6 +731,60 @@ GLvoid drawScene()
 		glActiveTexture(GL_TEXTURE0);
 
 		board.Draw7(s_program);
+
+		glViewport(650, 800, 50, 50);
+		cameratransform9 = glm::mat4(1.0f);
+		cameratransform9 = glm::rotate(cameratransform9, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform9 = glm::rotate(cameratransform9, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation9 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation9, 1, GL_FALSE, glm::value_ptr(cameratransform9));
+
+		glm::mat4 perspect9 = glm::mat4(1.0f);
+		perspect9 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect9 = glm::translate(perspect9, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation9 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation9, 1, GL_FALSE, glm::value_ptr(perspect9));
+
+		int cameraPosLocation9 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation9, 1, glm::value_ptr(cameraPos));
+		int lightPosLocation9 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation9, x_1, y_1, z_1);
+		int lightColorLocation9 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation9, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw1(s_program,myWin);
+
+		glViewport(550, 775, 100, 100);
+		cameratransform11 = glm::mat4(1.0f);
+		cameratransform11 = glm::rotate(cameratransform11, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform11 = glm::rotate(cameratransform11, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation11 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation11, 1, GL_FALSE, glm::value_ptr(cameratransform11));
+
+		glm::mat4 perspect11 = glm::mat4(1.0f);
+		perspect11 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect11 = glm::translate(perspect11, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation11 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation11, 1, GL_FALSE, glm::value_ptr(perspect11));
+
+		int cameraPosLocation11 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation11, 1, glm::value_ptr(otherCameraPos));
+		int lightPosLocation11 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation11, x_1, y_1, z_1);
+		int lightColorLocation11 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation11, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw8(s_program);
 	}
 	else if (main_loading)
 	{
@@ -981,7 +1048,7 @@ GLvoid drawScene()
 
 		board.Draw4(s_program, wind_speed);
 
-		glViewport(1000, 800, 400, 50);
+		glViewport(950, 800, 400, 50);
 		cameratransform8 = glm::mat4(1.0f);
 		cameratransform8 = glm::rotate(cameratransform8, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
 		cameratransform8 = glm::rotate(cameratransform8, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
@@ -1007,6 +1074,60 @@ GLvoid drawScene()
 		glActiveTexture(GL_TEXTURE0);
 
 		board.Draw6(s_program);
+
+		glViewport(1450, 800, 50, 50);
+		cameratransform10 = glm::mat4(1.0f);
+		cameratransform10 = glm::rotate(cameratransform10, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform10 = glm::rotate(cameratransform10, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation10 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation10, 1, GL_FALSE, glm::value_ptr(cameratransform10));
+
+		glm::mat4 perspect10 = glm::mat4(1.0f);
+		perspect10 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect10 = glm::translate(perspect10, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation10 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation10, 1, GL_FALSE, glm::value_ptr(perspect10));
+
+		int cameraPosLocation10 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation10, 1, glm::value_ptr(otherCameraPos));
+		int lightPosLocation10 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation10, x_1, y_1, z_1);
+		int lightColorLocation10 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation10, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw1(s_program, otherWin);
+
+		glViewport(1350, 775, 100, 100);
+		cameratransform11 = glm::mat4(1.0f);
+		cameratransform11 = glm::rotate(cameratransform11, (float)glm::radians(0.0), glm::vec3(1.0, 0.0, 0.0));
+		cameratransform11 = glm::rotate(cameratransform11, (float)glm::radians(0.0 + 180.0), glm::vec3(0.0, 1.0, 0.0));
+		unsigned int cameraLocation11 = glGetUniformLocation(s_program, "cameraTransform");
+		glUniformMatrix4fv(cameraLocation11, 1, GL_FALSE, glm::value_ptr(cameratransform11));
+
+		glm::mat4 perspect11 = glm::mat4(1.0f);
+		perspect11 = glm::perspective(glm::radians(fovy), (float)width / (float)height, near_1, far_1);
+		perspect11 = glm::translate(perspect11, glm::vec3(0.0, 0.0, persfect_z));
+		unsigned int projectionLocation11 = glGetUniformLocation(s_program, "projectionTransform");
+		glUniformMatrix4fv(projectionLocation11, 1, GL_FALSE, glm::value_ptr(perspect11));
+
+		int cameraPosLocation11 = glGetUniformLocation(s_program, "cameraPos");
+		glUniform3fv(cameraPosLocation11, 1, glm::value_ptr(otherCameraPos));
+		int lightPosLocation11 = glGetUniformLocation(s_program, "lightPos");
+		glUniform3f(lightPosLocation11, x_1, y_1, z_1);
+		int lightColorLocation11 = glGetUniformLocation(s_program, "lightColor");
+		glUniform3f(lightColorLocation11, Light_R, Light_G, Light_B);
+
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glActiveTexture(GL_TEXTURE0);
+
+		board.Draw8(s_program);
 	}
 	else if (main_loading)
 	{
@@ -1124,6 +1245,8 @@ void InitTexture()
 	int widthImage_enemydisplay, heightImage_enemydisplay, numberOfChannel_enemydisplay;
 	int widthImage_mydisplay, heightImage_mydisplay, numberOfChannel_mydisplay;
 
+	int widthImage_win_count, heightImage_win_count, numberOfChannel_win_count;
+
 	stbi_set_flip_vertically_on_load(true);
 
 	unsigned char* sky1 = stbi_load("sky1.png", &widthImage, &heightImage, &numberOfChannel, 0);
@@ -1182,9 +1305,10 @@ void InitTexture()
 
 	unsigned char* enemydisplay = stbi_load("enemydisplay.png", &widthImage_enemydisplay, &heightImage_enemydisplay, &numberOfChannel_enemydisplay, 0);
 	unsigned char* mydisplay = stbi_load("mydisplay.png", &widthImage_mydisplay, &heightImage_mydisplay, &numberOfChannel_mydisplay, 0);
+	unsigned char* win_count = stbi_load("win_count.png", &widthImage_win_count, &heightImage_win_count, &numberOfChannel_win_count, 0);
 
 
-	glGenTextures(44, texture);
+	glGenTextures(45, texture);
 
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -1545,6 +1669,14 @@ void InitTexture()
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, widthImage_mydisplay, heightImage_mydisplay, 0, GL_BGRA, GL_UNSIGNED_BYTE, mydisplay);
 	stbi_image_free(mydisplay);
 
+	glBindTexture(GL_TEXTURE_2D, texture[44]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, widthImage_win_count, heightImage_win_count, 0, GL_BGRA, GL_UNSIGNED_BYTE, win_count);
+	stbi_image_free(win_count);
+
 	glUseProgram(s_program);
 	int tLocation = glGetUniformLocation(s_program, "outTexture");
 	glUniform1i(tLocation, 0);
@@ -1632,6 +1764,8 @@ void Timer(int value)
 				wind_y += (0.0009 * 1.229 * pow(wind_speed, 2.0));
 				wind_z += 0;
 				break;
+			default:
+				break;
 			}
 			t += 0.01;
 			arrow_z = v * cos(arrow_angle_y) * t;
@@ -1644,7 +1778,7 @@ void Timer(int value)
 			{
 				arrow_x = 0;
 			}
-			arrow.objectmatrix.position = glm::vec3(arrow_x + wind_x, arrow_y + wind_y, arrow_z + wind_z);
+			arrow.objectmatrix.position = glm::vec3(arrow_x + wind_x + initPacket.player1Pos.x, arrow_y + wind_y, arrow_z + wind_z);
 			arrow.modelmatrix.rotation.x = -atanf((arrow_y - pre_arrow_y) / (arrow_z - pre_arrow_z)) * (180.0 / PI);
 			arrow.modelmatrix.rotation.y = atanf((arrow_x - pre_arrow_x) / (arrow_z - pre_arrow_z)) * (180.0 / PI);
 			pre_arrow_x = arrow_x;
@@ -1655,7 +1789,7 @@ void Timer(int value)
 			{
 				camera_y = arrow_y + wind_y;
 				camera_z = arrow_z + wind_z;
-				camera_x = arrow_x + wind_x;
+				camera_x = arrow_x + wind_x + initPacket.player1Pos.x;
 			}
 			else if (camera_mode == 1)
 			{
@@ -1699,8 +1833,8 @@ void Timer(int value)
 		{
 			for (int i = 0; i < CUBE_SIZE; ++i)
 			{
-				paticle[i].modelmatrix.position.x = arrow.objectmatrix.position.x;
-				paticle[i].modelmatrix.position.y = arrow.objectmatrix.position.y;
+				paticle[i].modelmatrix.position.x = hitPos.x;
+				paticle[i].modelmatrix.position.y = hitPos.y;
 			}
 		}
 		particle_speed += 0.0005;
@@ -1720,9 +1854,9 @@ void Timer(int value)
 			particle_speed = 0;
 			for (int i = 0; i < CUBE_SIZE; ++i)
 			{
-				paticle[i].modelmatrix.position.x = 0.0;
-				paticle[i].modelmatrix.position.y = 0.0;
-				paticle[i].modelmatrix.position.z = 90.0;
+				paticle[i].modelmatrix.position.x = 0;
+				paticle[i].modelmatrix.position.y = 0;
+				paticle[i].modelmatrix.position.z = 40;
 			}
 		}
 	}
@@ -1732,6 +1866,19 @@ void Timer(int value)
 	{
 		// stage += 1;
 		// total_score = 0;
+		if (otherScore < myScore)
+		{
+			myWin++;
+		}
+		else if (otherScore > myScore)
+		{
+			otherWin++;
+		}
+		else
+		{
+			myWin++;
+			otherWin++;
+		}
 		t = 0;
 		v = 0;
 		y_angle = 0;

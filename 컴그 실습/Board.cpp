@@ -255,3 +255,12 @@ void Board::Draw7(int programID)
 	glBindTexture(GL_TEXTURE_2D, texture[43]);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
+
+void Board::Draw8(int programID)
+{
+	unsigned int modelLocation = glGetUniformLocation(programID, "modelTransform");
+	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(GetTransform() * GetmodelTransform()));
+	glBindVertexArray(vao);
+	glBindTexture(GL_TEXTURE_2D, texture[44]);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}

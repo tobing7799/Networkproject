@@ -17,4 +17,5 @@ public:
 	void Draw5(int programID);
 	void Draw6(int programID);
 	void Draw7(int programID);
+	void Draw8(int programID);
 };
