@@ -91,11 +91,6 @@ Cube paticle[CUBE_SIZE];
 Arrow otherArrow;
 Bow otherBow;
 
-MCI_OPEN_PARMS m_mciOpenParms;
-MCI_PLAY_PARMS m_mciPlayParms;
-DWORD m_dwDeviceID;
-MCI_OPEN_PARMS mciOpen;
-MCI_PLAY_PARMS mciPlay;
 int dwID;
 
 float other_x_angle = 0;
@@ -370,16 +365,6 @@ void main(int argc, char* argv[])
 	otherArrow.objectmatrix.position = glm::vec3(0.0, 0.0, 0.0);
 	bow.objectmatrix.position = glm::vec3(arrow.objectmatrix.position.x - 0.07, arrow.objectmatrix.position.y, 0.0);
 	otherBow.objectmatrix.position = glm::vec3(otherArrow.objectmatrix.position.x - 0.07, otherArrow.objectmatrix.position.y, 0.0);
-
-	mciOpen.lpstrElementName = "ºê±Ý1.mp3";
-	mciOpen.lpstrDeviceType = "mpegvideo";
-
-	mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-		(DWORD)(LPVOID)&mciOpen);
-
-	dwID = mciOpen.wDeviceID;
-
-	mciSendCommand(dwID, MCI_PLAY, MCI_DGV_PLAY_REPEAT, (DWORD)(LPVOID)&m_mciPlayParms);
 
 	for (int i = 0; i < 10; i++)
 	{
