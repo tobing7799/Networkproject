@@ -9,8 +9,8 @@
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
-const int CIRCLENUMWIDTH = 5;
-const int CIRCLENUMHEIGHT = 5;
+const int CIRCLENUMWIDTH = 2;
+const int CIRCLENUMHEIGHT = 2;
 const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT;
 
 int stage = 0; // 스테이지 넘버
@@ -302,8 +302,8 @@ InitPacket InitializePacket()
 	for (int i = 0; i < CIRCLENUMWIDTH; ++i) {
 		for (int j = 0; j < CIRCLENUMHEIGHT; ++j) {
 			//g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 10.f, (j - CIRCLENUMHEIGHT / 2) * 10.f, urd(dre));
-			g_circleCenter[5 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 3.f, (j) * 3.f, 40.f);
-			g_circleState[5 * i + j] = CIRCLE_ON;
+			g_circleCenter[2 * i + j] = glm::vec3((i - CIRCLENUMWIDTH / 2) * 3.f, (j) * 3.f, 40.f);
+			g_circleState[2 * i + j] = CIRCLE_ON;
 		}
 	}
 	//std::sort(g_circleCenter, g_circleCenter + CIRCLENUM, [](const glm::vec3& a, const glm::vec3& b) {
@@ -332,14 +332,13 @@ void nextStage()
 
 void CircleMgr(const glm::vec3& pos, int index)
 {
-	if (CIRCLENUM == 0) {
-		nextStage();
-	}
-	EnterCriticalSection(&cs);
+	int count{};
 	for (int i = 0; i < CIRCLENUM; ++i)
 	{
-		if (g_circleState[i] == CIRCLE_OFF)
+		if (g_circleState[i] == CIRCLE_OFF) {
+			count++;
 			continue;
+		}
 		else if (g_circleState[i] == CIRCLE_ON)
 		{
 			if (ArrowCheck(pos, i, index)) {
@@ -352,7 +351,14 @@ void CircleMgr(const glm::vec3& pos, int index)
 			g_Packet[0].circleState[i] = g_Packet[1].circleState[i] = g_circleState[i] = CIRCLE_OFF;
 		}
 	}
-	LeaveCriticalSection(&cs);
+	if (count == CIRCLENUM) {
+		if (index == 1) {
+			nextStage();
+			for (int i = 0; i < CIRCLENUM; ++i) {
+				g_Packet[0].circleState[i] = g_Packet[1].circleState[i] = g_circleState[i] = CIRCLE_ON;
+			}
+		}
+	}
 }
 
 bool ArrowCheck(const glm::vec3& pos, int circleIndex, int index)
