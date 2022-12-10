@@ -292,10 +292,6 @@ void main(int argc, char* argv[])
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return;
 
-	DataThread = CreateThread(NULL, 0, DataComm, NULL, 0, NULL);
-	if (DataThread == NULL) closesocket(sock);
-	else CloseHandle(DataThread);
-
 	width = 800;
 	height = 800;
 
@@ -2150,5 +2146,8 @@ bool CreateSocekt()
 	otherCamera_y = otherBow.objectmatrix.position.y + 0.2;
 	otherCamera_z = otherBow.objectmatrix.position.z + 0.6;
 
+	DataThread = CreateThread(NULL, 0, DataComm, NULL, 0, NULL);
+	if (DataThread == NULL) closesocket(sock);
+	else CloseHandle(DataThread);
 	return true;
 }
