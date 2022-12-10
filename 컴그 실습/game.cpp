@@ -16,8 +16,8 @@
 
 char* SERVERIP = (char*)"127.0.0.2"; // default local
 #define SERVERPORT 9000
-const int CIRCLENUMWIDTH = 5;
-const int CIRCLENUMHEIGHT = 5;
+const int CIRCLENUMWIDTH = 2;
+const int CIRCLENUMHEIGHT = 2;
 const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT; //서버에서 보내주는 것으로 바꿔야함
 
 
@@ -237,12 +237,64 @@ DWORD WINAPI DataComm(LPVOID arg)
 			otherArrow.modelmatrix.rotation = inPacket.arrowRotation;
 			wind_dir = inPacket.wind_dir;
 			wind_speed = inPacket.wind_speed;
+
+			if (stage != inPacket.stage)
+			{
+				if (otherScore < myScore)
+				{
+					myWin++;
+				}
+				else if (otherScore > myScore)
+				{
+					otherWin++;
+				}
+				else
+				{
+					myWin++;
+					otherWin++;
+				}
+				t = 0;
+				v = 0;
+				y_angle = 0;
+				x_angle = 0;
+				camera_x = bow.objectmatrix.position.x + 0.2;
+				camera_y = bow.objectmatrix.position.y + 0.2;
+				camera_z = bow.objectmatrix.position.z + 0.6;
+				arrow_x = 0.07;
+				arrow_y = 0;
+				arrow_z = 0.5;
+				arrow_on = false;
+				score_on = false;
+				arrow.objectmatrix.position = initPacket.player1Pos;
+
+				arrow.modelmatrix.rotation.x = 0;
+				arrow.modelmatrix.rotation.y = 0;
+				arrow.modelmatrix.rotation.z = 0;
+
+				pass = false;
+				mciSendCommand(dwID, MCI_STOP, 0, (DWORD)(LPVOID)&m_mciPlayParms);
+				switch (stage) {
+				case 0:
+				case 1:
+				case 2:
+				case 3:
+					mciOpen.lpstrElementName = "브금1.mp3";
+					mciOpen.lpstrDeviceType = "mpegvideo";
+
+					mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
+						(DWORD)(LPVOID)&mciOpen);
+
+					dwID = mciOpen.wDeviceID;
+
+					mciSendCommand(dwID, MCI_PLAY, MCI_DGV_PLAY_REPEAT, (DWORD)(LPVOID)&m_mciPlayParms);
+					break;
+				}
+			}
+
+			stage = inPacket.stage;
 			myScore = LOBYTE(inPacket.total_score);
 			otherScore = HIBYTE(inPacket.total_score);
 
-			if (stage != inPacket.stage)
-				pass = true;
-			stage = inPacket.stage;
 
 			for (int i = 0; i < circleheight * circlewidth; ++i)
 			{
@@ -1858,66 +1910,6 @@ void Timer(int value)
 				paticle[i].modelmatrix.position.y = 0;
 				paticle[i].modelmatrix.position.z = 40;
 			}
-		}
-	}
-	
-
-	if (pass)
-	{
-		// stage += 1;
-		// total_score = 0;
-		if (otherScore < myScore)
-		{
-			myWin++;
-		}
-		else if (otherScore > myScore)
-		{
-			otherWin++;
-		}
-		else
-		{
-			myWin++;
-			otherWin++;
-		}
-		t = 0;
-		v = 0;
-		y_angle = 0;
-		x_angle = 0;
-		camera_x = bow.objectmatrix.position.x + 0.2;
-		camera_y = bow.objectmatrix.position.y + 0.2;
-		camera_z = bow.objectmatrix.position.z + 0.6;
-		arrow_x = 0.07;
-		arrow_y = 0;
-		arrow_z = 0.5;
-		arrow_on = false;
-		score_on = false;
-		arrow.objectmatrix.position = initPacket.player1Pos;
-
-		arrow.modelmatrix.rotation.x = 0;
-		arrow.modelmatrix.rotation.y = 0;
-		arrow.modelmatrix.rotation.z = 0;
-
-		pass = false;
-		/*if (stage > 3)
-		{
-			stage = 0;
-		}*/
-		mciSendCommand(dwID, MCI_STOP, 0, (DWORD)(LPVOID)&m_mciPlayParms);
-		switch (stage) {
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-			mciOpen.lpstrElementName = "브금1.mp3";
-			mciOpen.lpstrDeviceType = "mpegvideo";
-
-			mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-				(DWORD)(LPVOID)&mciOpen);
-
-			dwID = mciOpen.wDeviceID;
-
-			mciSendCommand(dwID, MCI_PLAY, MCI_DGV_PLAY_REPEAT, (DWORD)(LPVOID)&m_mciPlayParms);
-			break;
 		}
 	}
 
