@@ -199,6 +199,7 @@ struct InPacket {
 	float wind_speed; // 바람의 세기
 	short circleState[CIRCLENUM]; // 과녁의 상태
 	int stage;
+	short winCount; // 바람의 방향
 };
 
 struct InitPacket {
@@ -240,19 +241,8 @@ DWORD WINAPI DataComm(LPVOID arg)
 
 			if (stage != inPacket.stage)
 			{
-				if (otherScore < myScore)
-				{
-					myWin++;
-				}
-				else if (otherScore > myScore)
-				{
-					otherWin++;
-				}
-				else
-				{
-					myWin++;
-					otherWin++;
-				}
+				myWin = LOBYTE(inPacket.winCount);
+				otherWin = HIBYTE(inPacket.winCount);
 				t = 0;
 				v = 0;
 				y_angle = 0;

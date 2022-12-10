@@ -38,6 +38,7 @@ struct Packet {
 	float wind_speed; // 바람의 세기
 	short circleState[CIRCLENUM]; // 과녁의 상태
 	int stage;
+	float winCount; 
 };
 
 struct InitPacket {
@@ -86,6 +87,8 @@ HANDLE hWindThread;
 
 short winddir;
 float windspeed;
+int	client0_win_count;
+int	client1_win_count;
 
 DWORD WINAPI ClientMgr(LPVOID arg) { // arg로 SocketWithIndex가 넘어옴
 	SocketWithIndex* swi = (SocketWithIndex*)arg;
@@ -322,12 +325,31 @@ InitPacket InitializePacket()
 
 void nextStage()
 {
+	if (clientScore[0] < clientScore[1])
+	{
+		client1_win_count++
+	}
+	else if (clientScore[0] > clientScore[1])
+	{
+		client0_win_count++;
+	}
+	else
+	{
+		client0_win_count++;
+		client1_win_count++;
+	}
+
+	g_Packet[0].winCount = MAKEWORD(client0_win_count, client1_win_count);
+	g_Packet[1].winCount = MAKEWORD(client1_win_count, client0_win_count);
+
 	stage++;
 	if (stage > 3) {
 		stage = 0;
 	}
 	g_Packet[0].stage = stage;
 	g_Packet[1].stage = stage;
+	clientScore[0] = 0;
+	clientScore[1] = 0;
 }
 
 void CircleMgr(const glm::vec3& pos, int index)
