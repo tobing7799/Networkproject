@@ -18,7 +18,7 @@ char* SERVERIP = (char*)"127.0.0.2"; // default local
 #define SERVERPORT 9000
 const int CIRCLENUMWIDTH = 2;
 const int CIRCLENUMHEIGHT = 2;
-const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT; //서버에서 보내주는 것으로 바꿔야함
+const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT;
 
 
 char* filetobuf(const char* file);
@@ -198,8 +198,8 @@ struct InPacket {
 	short wind_dir; // 바람의 방향
 	float wind_speed; // 바람의 세기
 	short circleState[CIRCLENUM]; // 과녁의 상태
-	int stage;
-	short winCount; // 바람의 방향
+	int stage; // 스테이지
+	short winCount; // 승리 카운트
 };
 
 struct InitPacket {
@@ -262,23 +262,6 @@ DWORD WINAPI DataComm(LPVOID arg)
 				arrow.modelmatrix.rotation.z = 0;
 
 				pass = false;
-				mciSendCommand(dwID, MCI_STOP, 0, (DWORD)(LPVOID)&m_mciPlayParms);
-				switch (stage) {
-				case 0:
-				case 1:
-				case 2:
-				case 3:
-					mciOpen.lpstrElementName = "브금1.mp3";
-					mciOpen.lpstrDeviceType = "mpegvideo";
-
-					mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-						(DWORD)(LPVOID)&mciOpen);
-
-					dwID = mciOpen.wDeviceID;
-
-					mciSendCommand(dwID, MCI_PLAY, MCI_DGV_PLAY_REPEAT, (DWORD)(LPVOID)&m_mciPlayParms);
-					break;
-				}
 			}
 
 			stage = inPacket.stage;
@@ -316,12 +299,12 @@ void main(int argc, char* argv[])
 	width = 800;
 	height = 800;
 
-	FILE* cubemap = fopen("cube.obj", "rb");
-	FILE* arrowfile = fopen("arrow_face_no.obj", "rb");
-	FILE* arrowuv = fopen("arrowtest.txt", "rb");
-	FILE* bowvertex = fopen("bow_vertex.obj", "rb");
-	FILE* bowuv = fopen("bow_uvdata.obj", "rb");
-	FILE* cube = fopen("cube.obj", "rb");
+	FILE* cubemap = fopen("texture/cube.obj", "rb");
+	FILE* arrowfile = fopen("texture/arrow_face_no.obj", "rb");
+	FILE* arrowuv = fopen("texture/arrowtest.txt", "rb");
+	FILE* bowvertex = fopen("texture/bow_vertex.obj", "rb");
+	FILE* bowuv = fopen("texture/bow_uvdata.obj", "rb");
+	FILE* cube = fopen("texture/cube.obj", "rb");
 
 	srand((unsigned)time(NULL));
 	glutInit(&argc, argv);
@@ -357,14 +340,6 @@ void main(int argc, char* argv[])
 	{
 		paticle[i].Readobj(cube);
 	}
-
-	// 임시 Center
-	/*for (int i = 0; i < 5; ++i) {
-		for (int j = 0; j < 5; ++j) {
-			circleCenter[5 * i + j] = glm::vec3((i - 5 / 2) * 10.f, (j - 5 / 2) * 10.f, rand() % 50 + 40.f);
-			std::cout << circleCenter[5 * i + j].x << ", " << circleCenter[5 * i + j].y << ", " << circleCenter[5 * i + j].z << std::endl;
-		}
-	}*/
 	
 	InitShader();
 	InitBuffer();
@@ -400,7 +375,6 @@ void main(int argc, char* argv[])
 	bow.objectmatrix.position = glm::vec3(arrow.objectmatrix.position.x - 0.07, arrow.objectmatrix.position.y, 0.0);
 	otherBow.objectmatrix.position = glm::vec3(otherArrow.objectmatrix.position.x - 0.07, otherArrow.objectmatrix.position.y, 0.0);
 
-	// stage = 0;
 	mciOpen.lpstrElementName = "브금1.mp3";
 	mciOpen.lpstrDeviceType = "mpegvideo";
 
@@ -416,14 +390,6 @@ void main(int argc, char* argv[])
 		circle[i].modelmatrix.position.z += 90.01 + 0.001 * i;
 		circle[i].modelmatrix.scale = glm::vec3(i * 0.1 + 0.1, i * 0.1 + 0.1, 1.0);
 	}
-
-	/*for (int i = 0; i < 25; ++i) {
-		for (int j = 0; j < 10; ++j) {
-			circleTest[i][j].modelmatrix.position = circleCenter[i];
-			circleTest[i][j].modelmatrix.position.z += 0.001 * j;
-			circleTest[i][j].modelmatrix.scale = glm::vec3(j * 0.1 + 0.1, j * 0.1 + 0.1, 1.0);
-		}
-	}*/
 
 	line.modelmatrix.scale = glm::vec3(1.0, 1.0, 1.0);
 	board.modelmatrix.scale = glm::vec3(1.0, 1.0, 1.0);
@@ -510,7 +476,6 @@ GLvoid drawScene()
 		cameratransform = glm::mat4(1.0f);
 		cameratransform = glm::rotate(cameratransform, (float)glm::radians(x_angle), glm::vec3(1.0, 0.0, 0.0));
 		cameratransform = glm::rotate(cameratransform, (float)glm::radians(y_angle + 180.0), glm::vec3(0.0, 1.0, 0.0));
-		//cameratransform = glm::rotate(cameratransform, (float)glm::radians(180.0), glm::vec3(0.0, 1.0, 0.0));
 		cameratransform = glm::translate(cameratransform, glm::vec3(-camera_x, -camera_y, -camera_z));
 		unsigned int cameraLocation = glGetUniformLocation(s_program, "cameraTransform");
 		glUniformMatrix4fv(cameraLocation, 1, GL_FALSE, glm::value_ptr(cameratransform));
@@ -537,11 +502,6 @@ GLvoid drawScene()
 		{
 			line.Draw(s_program);
 		}
-
-		//for (int i = 0; i < 10; i++)
-		//{
-		//	circle[i].Draw(s_program);
-		//}
 
 		for (int i = 0; i < circleheight*circlewidth; ++i) {
 			for (int j = 0; j < 10; ++j) {
@@ -864,7 +824,6 @@ GLvoid drawScene()
 		cameratransform = glm::mat4(1.0f);
 		cameratransform = glm::rotate(cameratransform, (float)glm::radians(other_x_angle), glm::vec3(1.0, 0.0, 0.0));
 		cameratransform = glm::rotate(cameratransform, (float)glm::radians(other_y_angle + 180.0), glm::vec3(0.0, 1.0, 0.0));
-		//cameratransform = glm::rotate(cameratransform, (float)glm::radians(180.0), glm::vec3(0.0, 1.0, 0.0));
 		cameratransform = glm::translate(cameratransform, glm::vec3(-otherCamera_x, -otherCamera_y, -otherCamera_z));
 		unsigned int cameraLocation = glGetUniformLocation(s_program, "cameraTransform");
 		glUniformMatrix4fv(cameraLocation, 1, GL_FALSE, glm::value_ptr(cameratransform));
@@ -1291,63 +1250,63 @@ void InitTexture()
 
 	stbi_set_flip_vertically_on_load(true);
 
-	unsigned char* sky1 = stbi_load("sky1.png", &widthImage, &heightImage, &numberOfChannel, 0);
-	unsigned char* sky2 = stbi_load("sky2.png", &widthImage, &heightImage, &numberOfChannel, 0);
-	unsigned char* sky3 = stbi_load("sky3.png", &widthImage, &heightImage, &numberOfChannel, 0);
-	unsigned char* sky4 = stbi_load("sky4.png", &widthImage, &heightImage, &numberOfChannel, 0);
-	unsigned char* sky5 = stbi_load("sky5.png", &widthImage, &heightImage, &numberOfChannel, 0);
-	unsigned char* sky6 = stbi_load("sky6.png", &widthImage, &heightImage, &numberOfChannel, 0);
+	unsigned char* sky1 = stbi_load("texture/sky1.png", &widthImage, &heightImage, &numberOfChannel, 0);
+	unsigned char* sky2 = stbi_load("texture/sky2.png", &widthImage, &heightImage, &numberOfChannel, 0);
+	unsigned char* sky3 = stbi_load("texture/sky3.png", &widthImage, &heightImage, &numberOfChannel, 0);
+	unsigned char* sky4 = stbi_load("texture/sky4.png", &widthImage, &heightImage, &numberOfChannel, 0);
+	unsigned char* sky5 = stbi_load("texture/sky5.png", &widthImage, &heightImage, &numberOfChannel, 0);
+	unsigned char* sky6 = stbi_load("texture/sky6.png", &widthImage, &heightImage, &numberOfChannel, 0);
 
-	unsigned char* snow = stbi_load("snow.png", &widthImage_snow, &heightImage_snow, &numberOfChannel_snow, 0);
-	unsigned char* grass = stbi_load("grass.png", &widthImage_grass, &heightImage_grass, &numberOfChannel_grass, 0);
+	unsigned char* snow = stbi_load("texture/snow.png", &widthImage_snow, &heightImage_snow, &numberOfChannel_snow, 0);
+	unsigned char* grass = stbi_load("texture/grass.png", &widthImage_grass, &heightImage_grass, &numberOfChannel_grass, 0);
 
-	unsigned char* arctic1 = stbi_load("arctic1.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
-	unsigned char* arctic2 = stbi_load("arctic2.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
-	unsigned char* arctic3 = stbi_load("arctic3.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
-	unsigned char* arctic4 = stbi_load("arctic4.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
-	unsigned char* arctic5 = stbi_load("arctic5.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
-	unsigned char* arctic6 = stbi_load("arctic6.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
+	unsigned char* arctic1 = stbi_load("texture/arctic1.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
+	unsigned char* arctic2 = stbi_load("texture/arctic2.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
+	unsigned char* arctic3 = stbi_load("texture/arctic3.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
+	unsigned char* arctic4 = stbi_load("texture/arctic4.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
+	unsigned char* arctic5 = stbi_load("texture/arctic5.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
+	unsigned char* arctic6 = stbi_load("texture/arctic6.png", &widthImage_arctic, &heightImage_arctic, &numberOfChannel_arctic, 0);
 
-	unsigned char* ocean1 = stbi_load("ocean1.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
-	unsigned char* ocean2 = stbi_load("ocean2.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
-	unsigned char* ocean3 = stbi_load("ocean3.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
-	unsigned char* ocean4 = stbi_load("ocean4.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
-	unsigned char* ocean5 = stbi_load("ocean5.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
-	unsigned char* ocean6 = stbi_load("ocean6.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
+	unsigned char* ocean1 = stbi_load("texture/ocean1.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
+	unsigned char* ocean2 = stbi_load("texture/ocean2.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
+	unsigned char* ocean3 = stbi_load("texture/ocean3.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
+	unsigned char* ocean4 = stbi_load("texture/ocean4.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
+	unsigned char* ocean5 = stbi_load("texture/ocean5.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
+	unsigned char* ocean6 = stbi_load("texture/ocean6.png", &widthImage_ocean, &heightImage_ocean, &numberOfChannel_ocean, 0);
 
-	unsigned char* arrow = stbi_load("arrow_basebolor.png", &widthImage_arrow, &heightImage_arrow, &numberOfChannel_arrow, 0);
+	unsigned char* arrow = stbi_load("texture/arrow_basebolor.png", &widthImage_arrow, &heightImage_arrow, &numberOfChannel_arrow, 0);
 
-	unsigned char* white = stbi_load("white.png", &widthImage_white, &heightImage_white, &numberOfChannel_white, 0);
+	unsigned char* white = stbi_load("texture/white.png", &widthImage_white, &heightImage_white, &numberOfChannel_white, 0);
 
-	unsigned char* field1 = stbi_load("field1.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
-	unsigned char* field2 = stbi_load("field2.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
-	unsigned char* field3 = stbi_load("field3.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
-	unsigned char* field4 = stbi_load("field4.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
-	unsigned char* field5 = stbi_load("field5.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
-	unsigned char* field6 = stbi_load("field6.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
+	unsigned char* field1 = stbi_load("texture/field1.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
+	unsigned char* field2 = stbi_load("texture/field2.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
+	unsigned char* field3 = stbi_load("texture/field3.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
+	unsigned char* field4 = stbi_load("texture/field4.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
+	unsigned char* field5 = stbi_load("texture/field5.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
+	unsigned char* field6 = stbi_load("texture/field6.png", &widthImage_field, &heightImage_field, &numberOfChannel_field, 0);
 
-	unsigned char* score = stbi_load("score.png", &widthImage_score, &heightImage_score, &numberOfChannel_score, 0);
+	unsigned char* score = stbi_load("texture/score.png", &widthImage_score, &heightImage_score, &numberOfChannel_score, 0);
 
-	unsigned char* number0 = stbi_load("0.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
-	unsigned char* number1 = stbi_load("1.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
-	unsigned char* number2 = stbi_load("2.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
-	unsigned char* number3 = stbi_load("3.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
-	unsigned char* number4 = stbi_load("4.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
-	unsigned char* number5 = stbi_load("5.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
-	unsigned char* number6 = stbi_load("6.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
-	unsigned char* number7 = stbi_load("7.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
-	unsigned char* number8 = stbi_load("8.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
-	unsigned char* number9 = stbi_load("9.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
+	unsigned char* number0 = stbi_load("texture/0.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
+	unsigned char* number1 = stbi_load("texture/1.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
+	unsigned char* number2 = stbi_load("texture/2.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
+	unsigned char* number3 = stbi_load("texture/3.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
+	unsigned char* number4 = stbi_load("texture/4.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
+	unsigned char* number5 = stbi_load("texture/5.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
+	unsigned char* number6 = stbi_load("texture/6.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
+	unsigned char* number7 = stbi_load("texture/7.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
+	unsigned char* number8 = stbi_load("texture/8.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
+	unsigned char* number9 = stbi_load("texture/9.png", &widthImage_number, &heightImage_number, &numberOfChannel_number, 0);
 
-	unsigned char* direction = stbi_load("direction.png", &widthImage_direction, &heightImage_direction, &numberOfChannel_direction, 0);
+	unsigned char* direction = stbi_load("texture/direction.png", &widthImage_direction, &heightImage_direction, &numberOfChannel_direction, 0);
 
-	unsigned char* loading = stbi_load("loading.png", &widthImage_loading, &heightImage_loading, &numberOfChannel_loading, 0);
+	unsigned char* loading = stbi_load("texture/loading.png", &widthImage_loading, &heightImage_loading, &numberOfChannel_loading, 0);
 
-	unsigned char* cube = stbi_load("cube.png", &widthImage_cube, &heightImage_cube, &numberOfChannel_cube, 0);
+	unsigned char* cube = stbi_load("texture/cube.png", &widthImage_cube, &heightImage_cube, &numberOfChannel_cube, 0);
 
-	unsigned char* enemydisplay = stbi_load("enemydisplay.png", &widthImage_enemydisplay, &heightImage_enemydisplay, &numberOfChannel_enemydisplay, 0);
-	unsigned char* mydisplay = stbi_load("mydisplay.png", &widthImage_mydisplay, &heightImage_mydisplay, &numberOfChannel_mydisplay, 0);
-	unsigned char* win_count = stbi_load("win_count.png", &widthImage_win_count, &heightImage_win_count, &numberOfChannel_win_count, 0);
+	unsigned char* enemydisplay = stbi_load("texture/enemydisplay.png", &widthImage_enemydisplay, &heightImage_enemydisplay, &numberOfChannel_enemydisplay, 0);
+	unsigned char* mydisplay = stbi_load("texture/mydisplay.png", &widthImage_mydisplay, &heightImage_mydisplay, &numberOfChannel_mydisplay, 0);
+	unsigned char* win_count = stbi_load("texture/win_count.png", &widthImage_win_count, &heightImage_win_count, &numberOfChannel_win_count, 0);
 
 
 	glGenTextures(45, texture);
@@ -1841,32 +1800,6 @@ void Timer(int value)
 				y_angle = 180;
 			}
 		}
-		//else
-		//{
-		//	if (score_on == false)
-		//	{
-		//		score = 10;
-		//		for (int i = 0; i < 10; i++)
-		//		{
-		//			if (sqrt(pow(circle[i].modelmatrix.position.x - arrow_x + wind_x, 2.0) + pow(circle[i].modelmatrix.position.y - arrow_y + wind_y, 2.0)) <= (i * 0.1 + 0.1))
-		//			{
-		//				particle_on = true;
-		//				mciOpen.lpstrElementName = "jump.wav";
-		//				mciOpen.lpstrDeviceType = "mpegvideo";
-		//				mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-		//					(DWORD)(LPVOID)&mciOpen);
-		//				dwID = mciOpen.wDeviceID;
-		//				mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&m_mciPlayParms);
-		//				if (score > i)
-		//				{
-		//					score = i;
-		//				}
-		//			}
-		//		}
-		//		total_score += (10 - score);
-		//		score_on = true;
-		//	}
-		//}
 	}
 
 	if (particle_on)
@@ -2156,21 +2089,13 @@ bool CreateSocekt()
 		return true;
 	}
 	
-	circlewidth = HIBYTE(wh);
-	circleheight = LOBYTE(wh);
+	circlewidth = LOBYTE(wh);
+	circleheight = HIBYTE(wh);
 	retval = recv(sock, (char*)&initPacket, sizeof(initPacket), MSG_WAITALL);
 	if (retval == SOCKET_ERROR) {
 		err_display("recv() InitPacket");
 		return true;
 	}
-	
-	
-	//for (int i = 0; i < circleheight; ++i) {
-	//	for (int j = 0; j < circlewidth; ++j) {
-	//		initPacket.circleCenter[5 * i + j] = initPacket.circleCenter[5 * i + j];
-	//		printf("%f, %f %f\n", initPacket.circleCenter[5 * i + j].x, initPacket.circleCenter[5 * i + j].y, initPacket.circleCenter[5 * i + j].z);
-	//	}
-	//}
 
 	circleTest = new Circle *[circlewidth * circleheight];
 	for (int i = 0; i < circleheight * circlewidth; ++i)
@@ -2224,8 +2149,6 @@ bool CreateSocekt()
 	otherCamera_x = otherBow.objectmatrix.position.x + 0.2;
 	otherCamera_y = otherBow.objectmatrix.position.y + 0.2;
 	otherCamera_z = otherBow.objectmatrix.position.z + 0.6;
-
-	//line.objectmatrix.position = arrow.objectmatrix.position;
 
 	return true;
 }

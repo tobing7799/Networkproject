@@ -38,7 +38,7 @@ struct Packet {
 	float wind_speed; // 바람의 세기
 	short circleState[CIRCLENUM]; // 과녁의 상태
 	int stage;
-	float winCount; 
+	short winCount=0; 
 };
 
 struct InitPacket {
@@ -327,7 +327,7 @@ void nextStage()
 {
 	if (clientScore[0] < clientScore[1])
 	{
-		client1_win_count++
+		client1_win_count++;
 	}
 	else if (clientScore[0] > clientScore[1])
 	{
