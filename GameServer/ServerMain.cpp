@@ -12,6 +12,9 @@
 const int CIRCLENUMWIDTH = 2;
 const int CIRCLENUMHEIGHT = 2;
 const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT;
+const int stage1MaxSpeed = 21;
+const int stage2MaxSpeed = 41;
+const int stage3MaxSpeed = 91;
 
 int stage = 0; // 스테이지 넘버
 
@@ -85,8 +88,8 @@ Packet g_Packet[2];
 time_t windTime;
 HANDLE hWindThread;
 
-short winddir;
-float windspeed;
+short windDir;
+float windSpeed;
 int	client0_win_count;
 int	client1_win_count;
 
@@ -188,27 +191,27 @@ DWORD WINAPI windTimer(LPVOID arg) {
 			EnterCriticalSection(&cs);
 			if (stage == 0)
 			{
-				windspeed = 0.0;
+				windSpeed = 0.0;
 			}
 			else if (stage == 1)
 			{
-				windspeed = ((float)(rand() % 21) / 10);
+				windSpeed = ((float)(rand() % stage1MaxSpeed) / 10);
 			}
 			else if (stage == 2)
 			{
-				windspeed = ((float)(rand() % 41) / 10);
+				windSpeed = ((float)(rand() % stage2MaxSpeed) / 10);
 			}
 			else if (stage == 3)
 			{
-				windspeed = ((float)(rand() % 91) / 10);
+				windSpeed = ((float)(rand() % stage3MaxSpeed) / 10);
 			}
-			winddir = rand() % 9;
+			windDir = rand() % 9;
 			windTime = currentTime;
-			g_Packet[0].wind_dir = winddir;
-			g_Packet[0].wind_speed = windspeed;
-			g_Packet[1].wind_dir = winddir;
-			g_Packet[1].wind_speed = windspeed;
-			std::cout << winddir << std::endl;
+			g_Packet[0].wind_dir = windDir;
+			g_Packet[0].wind_speed = windSpeed;
+			g_Packet[1].wind_dir = windDir;
+			g_Packet[1].wind_speed = windSpeed;
+			std::cout << windDir << std::endl;
 			LeaveCriticalSection(&cs);
 			printf("0클라 : %d 1클라 : %d\n", clientScore[0], clientScore[1]);
 		}

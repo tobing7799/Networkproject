@@ -1,172 +1,155 @@
 ﻿  game.cpp
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\Snow.h(10,50): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(81,19): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(84,21): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(85,21): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(86,21): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(236,45): warning C4244: '+=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\Snow.h(10,50): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(108,14): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(245,44): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(246,44): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(247,44): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(248,15): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(371,45): warning C4244: '+=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(157,18): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(158,20): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(159,18): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(160,20): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(161,16): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(162,15): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(550,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(592,15): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(619,32): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(621,32): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(623,32): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(625,32): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(626,32): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(627,32): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(628,32): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1084,10): warning C4244: '초기화 중': 'GLint'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1085,10): warning C4244: '초기화 중': 'GLint'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1117,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1121,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1122,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1126,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1131,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1132,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1137,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1141,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1142,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1146,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1151,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1152,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1156,15): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1158,43): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1168,95): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(293,18): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(294,20): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(295,18): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(296,20): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(297,16): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(298,15): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(689,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1031,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1154,15): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1184,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1186,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1186,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1188,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1188,19): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1190,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1190,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1190,19): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1191,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1191,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1191,19): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1192,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1192,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1192,19): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1193,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1193,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1193,19): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1682,10): warning C4244: '초기화 중': 'GLint'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1683,10): warning C4244: '초기화 중': 'GLint'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1711,31): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1715,31): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1716,31): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1720,31): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1725,31): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1726,31): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1731,31): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1735,31): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1736,31): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1740,31): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1745,31): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1746,31): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1752,13): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1754,41): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1764,93): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1169,95): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1765,92): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1225,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1229,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1230,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1234,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1239,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1240,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1245,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1249,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1250,33): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1254,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1259,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1260,33): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1264,15): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1266,43): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1276,95): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1796,27): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1799,75): warning C4244: '+=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1277,94): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1800,75): warning C4244: '+=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1327,14): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1330,128): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1331,128): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1332,127): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1334,94): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1802,46): warning C4305: '-=': 'double'에서 'T'(으)로 잘립니다.
           with
           [
               T=float
           ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1335,93): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1805,26): warning C4305: '-=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1822,41): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1829,12): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1831,45): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1428,27): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1431,75): warning C4244: '+=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1833,33): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1834,56): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1432,75): warning C4244: '+=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1835,54): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1434,46): warning C4305: '-=': 'double'에서 'T'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1855,18): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1860,18): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1865,18): warning C4305: '-=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1870,18): warning C4305: '-=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1875,18): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1880,18): warning C4305: '-=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1902,34): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1911,33): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1931,43): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1932,43): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1933,43): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1934,14): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1944,34): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1953,33): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1960,42): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1961,42): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1962,42): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1998,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(1999,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2039,22): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2043,22): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2046,18): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2101,34): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2103,34): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2103,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2105,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2105,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2107,34): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2107,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2107,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2108,34): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2108,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2108,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2109,34): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2109,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2109,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2110,34): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2110,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2110,24): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2116,51): warning C4244: '+=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1437,26): warning C4305: '-=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1458,17): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1459,17): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1460,17): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1524,41): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1531,12): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1533,45): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-          with
-          [
-              T=float
-          ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1534,39): warning C4305: '=': 'double'에서 'T'(으)로 잘립니다.
-          with
-          [
-              T=float
-          ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1535,33): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1536,56): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-          with
-          [
-              T=float
-          ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1537,54): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-          with
-          [
-              T=float
-          ]
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1557,18): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1562,18): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1567,18): warning C4305: '-=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1572,18): warning C4305: '-=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1577,18): warning C4305: '+=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1582,18): warning C4305: '-=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1612,34): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1621,33): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1641,18): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1642,18): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1643,18): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1644,18): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1655,34): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1664,33): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1671,17): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1672,17): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1673,17): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1679,47): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1680,47): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1681,47): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1682,47): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1684,46): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1694,17): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1695,17): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1696,17): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1697,17): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1736,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1737,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1777,22): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1781,22): warning C4244: '+=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(1784,21): warning C4305: '=': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2126,41): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2127,41): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2128,41): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2130,51): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2131,51): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\ssudo\source\repos\Networkproject\컴그 실습\game.cpp(2132,51): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   코드를 생성하고 있습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(288): warning C4715: 'make_fragmentShaders': 모든 제어 경로에서 값을 반환하지는 않습니다.
-D:\2022NetworkGame\TermProject\Networkproject\컴그 실습\game.cpp(271): warning C4715: 'make_vertexShaders': 모든 제어 경로에서 값을 반환하지는 않습니다.
-  119 of 296 functions (40.2%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+  0 of 310 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  컴그 실습.vcxproj -> D:\2022NetworkGame\TermProject\Networkproject\Release\컴그 실습.exe
+  컴그 실습.vcxproj -> C:\Users\ssudo\source\repos\Networkproject\Release\컴그 실습.exe

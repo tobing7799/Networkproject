@@ -20,6 +20,16 @@ const int CIRCLENUMWIDTH = 2;
 const int CIRCLENUMHEIGHT = 2;
 const int CIRCLENUM = CIRCLENUMWIDTH * CIRCLENUMHEIGHT;
 
+const float acc = 0.01;
+const float arrowMoveZ = 0.5;
+
+const int snowSize = 10001;
+const int snowSizeDiv = 100;
+const float snowStartX= 50.0;
+const float snowStartY= 65.0;
+const float particleAcc = 0.0005;
+const float particleSubZ = 0.005;
+
 
 char* filetobuf(const char* file);
 void InitBuffer();
@@ -40,7 +50,7 @@ GLvoid Reshape(int w, int h);
 GLvoid Keyborad(unsigned char key, int x, int y);
 GLvoid Keyborad_up(unsigned char key, int x, int y);
 
-bool CreateSocekt();
+bool CreateSocket();
 
 SOCKET sock;
 sockaddr_in serveraddr;
@@ -155,7 +165,7 @@ bool replay = false;
 bool pass = false;
 
 float particle_during = 1.0;
-float particle_speed = 0;
+float particleSpeed = 0;
 bool particle_on = false;
 int particle_way_x[CUBE_SIZE];
 int particle_way_y[CUBE_SIZE];
@@ -339,13 +349,13 @@ void main(int argc, char* argv[])
 	for (int i = 0; i < SNOW_SIZE; i++)
 	{
 		snow[i].modelmatrix.scale = glm::vec3(1.0, 1.0, 1.0);
-		snow[i].modelmatrix.position = glm::vec3((float)((float)(rand() % 10001) / 100) - 50.0, 65.0, (float)((float)(rand() % 10001) / 100));
+		snow[i].modelmatrix.position = glm::vec3((float)((float)(rand() % snowSize) /snowSizeDiv) - snowStartX, snowStartY, (float)((float)(rand() % snowSize) / snowSizeDiv));
 	}
 
 	for (int i = 0; i < GRASS_SIZE; i++)
 	{
 		grass[i].modelmatrix.scale = glm::vec3(8.0, 1.0, 1.0);
-		grass[i].modelmatrix.position = glm::vec3((float)((float)(rand() % 10001) / 100) - 50.0, -35.0, (float)((float)(rand() % 10001) / 100));
+		grass[i].modelmatrix.position = glm::vec3((float)((float)(rand() % snowSize) / snowSizeDiv) - snowStartX, snowStartY-95.0, (float)((float)(rand() % snowSize) / snowSizeDiv));
 	}
 
 	for (int i = 0; i < CUBE_SIZE; i++)
@@ -1793,13 +1803,13 @@ void Timer(int value)
 				paticle[i].modelmatrix.position.y = hitPos.y;
 			}
 		}
-		particle_speed += 0.0005;
+		particleSpeed += particleAcc;
 		for (int i = 0; i < CUBE_SIZE; ++i)
 		{
-			paticle[i].modelmatrix.position.x += cos(particle_way_x[i] * PI / 180) * particle_speed;
-			paticle[i].modelmatrix.position.y += sin(particle_way_y[i] * PI / 180) * particle_speed;
+			paticle[i].modelmatrix.position.x += cos(particle_way_x[i] * PI / 180) * particleSpeed;
+			paticle[i].modelmatrix.position.y += sin(particle_way_y[i] * PI / 180) * particleSpeed;
 
-			paticle[i].modelmatrix.position.z -= 0.005;
+			paticle[i].modelmatrix.position.z -= particleSubZ;
 		}
 
 		particle_during -= 0.01;
@@ -1807,7 +1817,7 @@ void Timer(int value)
 		{
 			particle_during = 1.0f;
 			particle_on = false;
-			particle_speed = 0;
+			particleSpeed = 0;
 			for (int i = 0; i < CUBE_SIZE; ++i)
 			{
 				paticle[i].modelmatrix.position.x = 0;
@@ -1828,7 +1838,7 @@ void Timer(int value)
 		{
 			v += 0.1;
 		}
-		arrow.objectmatrix.position.z = -v * 0.01 + 0.5;
+		arrow.objectmatrix.position.z = -v * acc + arrowMoveZ;
 		arrow.objectmatrix.position.x = initPacket.player1Pos.x;
 		arrow_angle_y = -x_angle * PI / 180.0;
 		arrow.modelmatrix.rotation.x = -atanf(arrow_angle_y) * (180.0 / PI);
@@ -1968,7 +1978,7 @@ GLvoid Keyborad(unsigned char key, int x, int y)
 			main_loading = false;
 			sock = socket(AF_INET, SOCK_STREAM, 0);
 			if (sock == INVALID_SOCKET) err_quit("socket()");
-			connectState=CreateSocekt();
+			connectState=CreateSocket();
 		}
 		break;
 	case 27: // Escape
@@ -2049,7 +2059,7 @@ GLvoid mouseWheel(int button, int dir, int x, int y)
 	glutPostRedisplay();
 }
 
-bool CreateSocekt()
+bool CreateSocket()
 {
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
